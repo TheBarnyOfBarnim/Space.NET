@@ -1,5 +1,5 @@
 # Space.NET
-<img src="https://github.com/PylonDev/Space.NET/blob/master/Space.NET%20Banner.png">Ai-Generated Image by DALL-E-2; Prompt: "Space.NET"
+<img src="Space.NET Banner.png">Ai-Generated Image by DALL-E-2; Prompt: "Space.NET"
 
 <a name="info"></a>
 ## Information

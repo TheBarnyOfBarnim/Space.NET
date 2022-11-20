@@ -1,0 +1,44 @@
+<cs>
+	var min = 1;
+	var max = 10;
+</cs>
+
+<html>
+	<head>
+    	<title>Game</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+<csharp>
+	if(POST != null)
+	{
+		int.TryParse(POST["num"], out int num);
+		var r = new Random().Next(min, max + 1);
+
+		if(r == num)
+		{
+			include("__FILE__/Win.cshtml");
+		}
+		else
+		{
+			include("__FILE__/Loose.cshtml");
+		}
+
+		return;
+	}
+
+</csharp>
+		<form method="POST">
+			<label for="num">
+				<p class="bold">
+					Pick a number between <cs>print(min + " and " + max);</cs>!
+				</p>
+			</label>
+
+			<input class="bold" type="number" id="num" name="num" min="<cs>print(min);</cs>" max="<cs>print(max);</cs>">
+			<br>
+			<br>
+			<button class="bold" id="submitbtn" type="submit">Pick!</button>
+		</form>
+	</body>
+</html>

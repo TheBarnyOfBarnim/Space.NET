@@ -24,10 +24,8 @@ namespace Space.NET.CSharp
 {
     internal static class HTMLScriptParser
     {
-        private const string CodeOpenTag = "<csharp>";
-        private const string CodeOpenTagAlt = "<cs>";
-        private const string CodeCloseTag = "</csharp>";
-        private const string CodeCloseTagAlt = "</cs>";
+        private const string CodeOpenTag = "<cs>";
+        private const string CodeCloseTag = "</cs>";
 
         //[System.Diagnostics.DebuggerHidden]
         internal static List<(bool, string)> ParseText(string Textinput, string FileDirectory)
@@ -99,7 +97,7 @@ namespace Space.NET.CSharp
             while(ReadOffset < Textinput.Length)
             {
                 //Find all Text Till a CodeOpenTag
-                var HTMLBlock = Find(Textinput, CodeOpenTag, CodeOpenTagAlt, out var FoundAlt, ReadOffset);
+                var HTMLBlock = Find(Textinput, CodeOpenTag, ReadOffset);
 
                 //If no CodeOpenTag found => File is pure HTML
                 if (HTMLBlock == null)
@@ -114,21 +112,18 @@ namespace Space.NET.CSharp
                     //Found a Code Block
 
                     //Advancing Reading Position to OpenTag + Tag Length
-                    ReadOffset += HTMLBlock.Length + (FoundAlt == false ? CodeOpenTag.Length : CodeOpenTagAlt.Length);
+                    ReadOffset += HTMLBlock.Length + CodeOpenTag.Length;
 
                     //Formatting Edge Case
                     HTMLBlock = HTMLBlock.Replace("\\" + CodeOpenTag, HttpUtility.HtmlEncode(CodeOpenTag));
                     HTMLBlock = HTMLBlock.Replace("\\" + CodeCloseTag, HttpUtility.HtmlEncode(CodeCloseTag));
-
-                    HTMLBlock = HTMLBlock.Replace("\\" + CodeOpenTagAlt, HttpUtility.HtmlEncode(CodeOpenTagAlt));
-                    HTMLBlock = HTMLBlock.Replace("\\" + CodeCloseTagAlt, HttpUtility.HtmlEncode(CodeCloseTagAlt));
 
                     //Add Found HTML Block to List
                     if (HTMLBlock != "\n")
                         Parts.Add((false, HTMLBlock));
 
                     //Find all Text Till a CodeCloseTag
-                    var CodeBlock = Find(Textinput, CodeCloseTag, CodeCloseTagAlt, out var FoundAlt2, ReadOffset);
+                    var CodeBlock = Find(Textinput, CodeCloseTag, ReadOffset);
 
                     //User did not close a Tag => Syntax Error
                     if (CodeBlock == null)
@@ -140,7 +135,7 @@ namespace Space.NET.CSharp
                         //Found Code Block to List
                         Parts.Add((true, CodeBlock));
                         //Advancing Reading Position to CloseTag + Tag Length
-                        ReadOffset += CodeBlock.Length + (FoundAlt2 == false ? CodeCloseTag.Length : CodeCloseTagAlt.Length) ;
+                        ReadOffset += CodeBlock.Length + CodeCloseTag.Length;
                     }
                 }
             }
@@ -148,19 +143,11 @@ namespace Space.NET.CSharp
             return Parts;
         }
 
-        private static string Find(string Text, string ToFind, string ToFindAlt, out bool FoundAlt, int Offset = 0)
+        private static string Find(string Text, string ToFind, int Offset = 0)
         {
-            FoundAlt = false;
 
             string OffsetText = Text.Substring(Offset);
             int FoundIndex = OffsetText.IndexOf(ToFind);
-            int FoundIndexAlt = OffsetText.IndexOf(ToFindAlt);
-
-            if (FoundIndex == -1 || FoundIndex > FoundIndexAlt)
-            {
-                FoundIndex = FoundIndexAlt;
-                FoundAlt = true;
-            }
 
             if (FoundIndex == 0)
             {
@@ -180,16 +167,7 @@ namespace Space.NET.CSharp
                 else
                 {
                     string output = TextTillFound + ToFind;
-                    if(FoundAlt == false)
-                    {
-                        output += Find(Text, ToFind, ToFindAlt, out bool FoundAlt2, FoundIndex + ToFind.Length);
-                        FoundAlt = false;
-                    }
-                    else
-                    {
-                        output += Find(Text, ToFind, ToFindAlt, out bool FoundAlt2, FoundIndex + ToFindAlt.Length);
-                        FoundAlt = true;
-                    }
+                    output += Find(Text, ToFind, FoundIndex + ToFind.Length);
                     return output;
                 }
             }

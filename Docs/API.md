@@ -21,7 +21,7 @@ ___
 ### The `.cshtml` file extension
 ⚠️The `.cshtml` file format is a custom format made by me. It's ⚠️**not**⚠️ the same as a <a href="https://learn.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-6.0">CSHTML - ASP.NET Razor Webpage</a>  
   
-The `.cshtml` file format is like the `.php` file format. You can imagine the file as a normal plain-text `.html` file. Only Addition is a new custom tag, the `<csharp>` or `<cs>` Tag! You can use this Tag at ANY postion of the file  
+The `.cshtml` file format is like the `.php` file format. You can imagine the file as a normal plain-text `.html` file. Only Addition is a new custom tag, the `<cs>` Tag! You can use this Tag at ANY postion of the file  
 (this is because the Script-Interpreter only reads those two Tags and not any other `HTML` Tag!)  
 Adding a `\` before the opening or closing Tag makes it so, that the Interpreter ignores this tag.
   
@@ -109,7 +109,7 @@ There are only four options for this argument:
               </head>
               <body>
                 <cs>
-      +          </csharp>
+      +          </cs>
       +            <cs>
       +              print(DateTime.Now.ToString())
       +            </cs>
@@ -117,14 +117,14 @@ There are only four options for this argument:
       +              Lorem ipsum dolor sit amet, consetetur sadipscing elitr,<br>
       +              sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
       +            </p>
-      +          <csharp>
+      +          <cs>
                 </cs>
               </body>
             </html>
       ```
       Conclusion/Result:  
       The `include("__FILE__/LoremIpsum.cshtml")` gets replaced with the following:  
-        `</csharp>` + `the File's Content` + `<csharp>`
+        `</cs>` + `the File's Content` + `<cs>`
 
 ___
 

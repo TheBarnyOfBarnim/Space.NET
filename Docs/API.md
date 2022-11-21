@@ -169,6 +169,7 @@ You can access the following Objects directly via their Names:
   - `string` `UserAgent` **:** The UserAgent the User is using  
   (e.g. `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36`)
   - `string` `TraceID` **:** The Unique ID of that Request
+  - `string` `ClientIPAddress` **:** The IP-Address
   
    **Methods:**
   - `string` `ToString()` **:** Returns the preceding Properties.

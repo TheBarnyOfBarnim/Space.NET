@@ -27,6 +27,7 @@ using Space.NET.API.Utilities;
 using static System.Net.WebRequestMethods;
 using System.Text.Json;
 
+
 namespace Space.NET.CSharp
 {
     internal static class HTMLScriptCompiler
@@ -47,6 +48,7 @@ namespace Space.NET.CSharp
                                   "using System.Threading;" +
                                   "using System.Threading.Tasks;" +
                                   "using System.ComponentModel;" +
+                                  "using System.Net.Mail;" +
                                   "using Space.NET.API;" +
                                   "using Space.NET.API.Utilities;";
             CodeOnionTop += "public static class " + Hash + " {";
@@ -68,8 +70,9 @@ namespace Space.NET.CSharp
                 "System.Threading",
                 "System.Threading.Tasks",
                 "System.ComponentModel",
+                "System.Net.Mail",
                 "Space.NET.API",
-                "Space.NET.API.Utilities"
+                "Space.NET.API.Utilities",
             };
             
             var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);

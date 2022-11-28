@@ -65,7 +65,7 @@ namespace Space.NET.CSharp
 
 
                             var includedText = "";
-                            includedText += "</csharp>";
+                            includedText += "</cs>";
 
                             if (File.Exists(path))
                             {
@@ -75,7 +75,7 @@ namespace Space.NET.CSharp
                             {
                                 includedText += "404: File not Found (" + path + ")";
                             }
-                            includedText += "<csharp>";
+                            includedText += "<cs>";
 
                             string BeforeInclude = TextLines[i].Substring(0, GetIncludeStatement.Index);
                             string AfterInclude = TextLines[i].Substring(GetIncludeStatement.Index + GetIncludeStatement.Length);
@@ -193,6 +193,8 @@ namespace Space.NET.CSharp
                     var Lines = Text.Split('\n').Length;
                     Text = Text.Replace(@"""", @"""""");
                     //Text = Text.Replace("\n", @"");
+                    if (Text.Length == 0)
+                        continue;
 
                     Code += @$"print(@""{Text}"");";
                     Code += new string('\n', Lines);

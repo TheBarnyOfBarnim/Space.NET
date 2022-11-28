@@ -5,7 +5,9 @@
  * https://github.com/PylonDev/Space.NET/blob/master/LICENSE.md
  */
 
+using Space.NET.CSharp;
 using System;
+using System.IO;
 using Utilities;
 
 namespace Space.NET.Core

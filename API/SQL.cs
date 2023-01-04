@@ -17,12 +17,13 @@ namespace Space.NET.API
 {
     public static class SQL
     {
-        public static DataBase ConnectDataBase(string Server, string DataBase, string Username, string Password)
+        public static DataBase ConnectDataBase(string Server, uint Port, string DataBase, string Username, string Password)
         {
             try
             {
                 MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder();
                 builder.Server = Server;
+                builder.Port = Port;
                 builder.UserID = Username;
                 builder.Password = Password;
                 builder.Database = DataBase;
@@ -58,10 +59,13 @@ namespace Space.NET.API
             {
                 try
                 {
+                    Parameters = Parameters == null ? new string[0] : Parameters;
+                    Values = Values == null ? new object[0] : Values;
+
                     using (MySqlCommand command = new MySqlCommand(SQLCommand, Connection))
                     {
-                        
-                        if((Parameters != null && Parameters.Length != 0) && (Values != null && Values.Length != 0) && Parameters.Length == Values.Length)
+
+                        if(Parameters.Length == Values.Length)
                         {
                             for (int i = 0; i < Parameters.Length; i++)
                             {
@@ -70,7 +74,8 @@ namespace Space.NET.API
                         }
                         else
                         {
-                            throw new ArgumentException("", "Parameters, Values");
+                            if(Parameters.Length > 0 || Values.Length > 0)
+                                throw new ArgumentException("", "Parameters, Values");
                         }
                         
                         DataTable Table = new DataTable();

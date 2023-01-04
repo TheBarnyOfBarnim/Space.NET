@@ -27,7 +27,6 @@ using Space.NET.API.Utilities;
 using static System.Net.WebRequestMethods;
 using System.Text.Json;
 
-
 namespace Space.NET.CSharp
 {
     internal static class HTMLScriptCompiler
@@ -41,6 +40,7 @@ namespace Space.NET.CSharp
                                   "using System.Collections.Generic;" +
                                   "using System.IO;" +
                                   "using System.Data;" +
+                                  "using System.Globalization;" + 
                                   "using System.Linq;" +
                                   "using System.Text;" +
                                   "using System.Text.Json;" +
@@ -50,14 +50,17 @@ namespace Space.NET.CSharp
                                   "using System.ComponentModel;" +
                                   "using System.Net.Mail;" +
                                   "using Space.NET.API;" +
-                                  "using Space.NET.API.Utilities;";
+                                  "using Space.NET.API.Utilities;" +
+                                  "using System.Xml.Linq;" +
+                                  "using System.Reflection;";
+
             CodeOnionTop += "public static class " + Hash + " {";
 
             CodeOnionTop += "public static void Execute(Server Server, Request Request, Session Session, GET GET, POST POST, Response Response) {";
             string CodeOnionBottom = "}}";
-
+      
             string NewCode = CodeOnionTop + Code + CodeOnionBottom;
-
+            
             IEnumerable<string> DefaultNamespaces =
             new[]
             {
@@ -66,6 +69,7 @@ namespace Space.NET.CSharp
                 "System.Collections.Generic",
                 "System.IO",
                 "System.Data",
+                "System.Globalization",
                 "System.Linq",
                 "System.Threading",
                 "System.Threading.Tasks",
@@ -73,6 +77,9 @@ namespace Space.NET.CSharp
                 "System.Net.Mail",
                 "Space.NET.API",
                 "Space.NET.API.Utilities",
+                "System.Xml.Linq",
+                "System.Reflection",
+
             };
             
             var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);

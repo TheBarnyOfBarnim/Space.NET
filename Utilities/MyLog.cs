@@ -29,7 +29,7 @@ namespace Utilities
 
         private const int LongestEnum = 8;
         private Stream stream;
-        private StreamWriter streamWriter;
+        private TextWriter textWriter;
 
         public bool WriteInConsole = true;
         public bool FireEvents = true;
@@ -39,7 +39,7 @@ namespace Utilities
         public delegate void OnWriteText(string Text);
         public event OnWriteText OnWrite;
 
-        public MyLog(string folderPath, string appName, string appversion)
+        public MyLog(string folderPath, string appName, string appversion) 
         {
             OnWrite += (t) => { };
             FolderPath = folderPath;
@@ -50,27 +50,8 @@ namespace Utilities
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(FolderPath, GetLogFileName(appName))));
             stream = File.Open(Path.Combine(FolderPath, GetLogFileName(appName)), FileMode.Create, FileAccess.Write, FileShare.Read);
-            streamWriter = new StreamWriter(stream, new UTF8Encoding(false, false));
+            textWriter = TextWriter.Synchronized(new StreamWriter(stream, new UTF8Encoding(false, false)));
             Initialized = true;
-
-            //string PylonSoftwareEngineASCII = "";
-            //PylonSoftwareEngineASCII += @"||==========================================================================================||" + "\n";
-            //PylonSoftwareEngineASCII += @"||                                                                                          ||" + "\n";
-            //PylonSoftwareEngineASCII += @"||                                                                                          ||" + "\n";
-            //PylonSoftwareEngineASCII += @"||                                                                                          ||" + "\n";
-            //PylonSoftwareEngineASCII += @"||                                                                                          ||" + "\n";
-            //PylonSoftwareEngineASCII += @"||                                                                                          ||" + "\n";
-            //PylonSoftwareEngineASCII += @"||                                                                                          ||" + "\n";
-            //PylonSoftwareEngineASCII += @"||                                                                                          ||" + "\n";
-            //PylonSoftwareEngineASCII += @"||                                                                                          ||" + "\n";
-            //PylonSoftwareEngineASCII += @"||==========================================================================================||" + "\n";
-            //
-            //
-            //Console.ForegroundColor = ConsoleColor.DarkYellow;
-            //Console.WriteLine(PylonSoftwareEngineASCII);
-            //WriteToStream(PylonSoftwareEngineASCII);
-            //Output += PylonSoftwareEngineASCII;
-
 
             Write("Log started: " + appName);
             Write(string.Format("Timezone (local - UTC): {0}h", GetLocalOffset()));
@@ -82,7 +63,7 @@ namespace Utilities
         {
             Write("Log Closed");
             stream = null;
-            streamWriter = null;
+            textWriter = null;
         }
 
 
@@ -92,7 +73,7 @@ namespace Utilities
             sb.Append(appName);
             sb.Append("_");
             sb.Append(GetDateTimeForFilename(DateTime.Now));
-            sb.Append(".pylog");
+            sb.Append(".log");
 
             return sb.ToString();
         }
@@ -278,13 +259,13 @@ namespace Utilities
 
         private void WriteToStream(string text)
         {
-            if (stream == null || streamWriter == null)
+            if (stream == null || textWriter == null)
             {
                 throw new Exception("Log not initialized yet!");
             }
 
-            streamWriter.Write(text);
-            streamWriter.Flush();
+            textWriter.Write(text);
+            textWriter.Flush();
         }
 
         public static string GetDateTimeForFilename(DateTime dt, bool ms = true)

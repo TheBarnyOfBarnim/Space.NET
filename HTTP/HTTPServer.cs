@@ -94,7 +94,7 @@ namespace Space.NET.HTTP
             #region Init_Request
             Request Request = GetRequest(ListenerContext);
             LogRequest(Request);
-            MyLog.Core.Write("New Request", LogSeverity.NONE);
+            MyLog.Core.Write("New Request : " + HTTPRequest.RawUrl, LogSeverity.NONE);
             #endregion Init_Request
 
             #region Init_Session
@@ -128,9 +128,12 @@ namespace Space.NET.HTTP
                 }
                 else
                 {
-                    MemoryStream InputStream = new MemoryStream();
-                    HTTPRequest.InputStream.CopyTo(InputStream);
-                    ParsedFormData = ParseHTMLData(HTTPRequest.ContentEncoding.GetString(InputStream.ToArray()));
+
+                    //StreamReader stream = new StreamReader(HTTPRequest.InputStream, HTTPRequest.ContentEncoding);
+                    //string Data = stream.ReadToEnd();
+                    string Data = HTTPRequest.Url.Query;
+                    Data = Data.StartsWith('?') ? Data.Substring(1) : Data;
+                    ParsedFormData = ParseHTMLData(Data);
                 }
             }
             catch (Exception ex)
@@ -171,13 +174,7 @@ namespace Space.NET.HTTP
                 if (IsFile)
                 {
                     Response.Headers.Add("Content-Type: " + MIME.GetMimeType(Extension));
-
-                    using (var stream = File.Open(Request.RealPath, FileMode.Open))
-                    {
-                        byte[] FileData = new byte[stream.Length];
-                        stream.Read(FileData, 0, FileData.Length);
-                        Response.Write(FileData);
-                    }
+                    Response.Write(File.ReadAllBytes(Request.RealPath));
                 }
                 // if Path is Folder
                 else if (IsFolder)

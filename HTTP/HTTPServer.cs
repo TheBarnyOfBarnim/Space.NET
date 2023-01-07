@@ -1,8 +1,8 @@
 ﻿/*!
  * Space.NET - a platform independent HTTP Server, running with .NET and C#.
- * https://github.com/PylonDev/Space.NET
- * Copyright (C) 2022 Endric Barnekow <pylon@pylonmediagroup.de>
- * https://github.com/PylonDev/Space.NET/blob/master/LICENSE.md
+ * https://github.com/TheBarnyOfBarnim/Space.NET
+ * Copyright (C) 2023 Endric Barnekow <mail@e-barnekow.de>
+ * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
 using Space.NET.API;
@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 using System.Web;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
-using Utilities;
 
 namespace Space.NET.HTTP
 {
@@ -91,21 +90,39 @@ namespace Space.NET.HTTP
         {
             HttpListenerRequest HTTPRequest = ListenerContext.Request;
             HttpListenerResponse HTTPResponse = ListenerContext.Response;
+
             #region Init_Request
             Request Request = GetRequest(ListenerContext);
             LogRequest(Request);
             MyLog.Core.Write("New Request : " + HTTPRequest.RawUrl, LogSeverity.NONE);
-            #endregion Init_Request
 
-            #region Init_Session
-            Session Session = Request.Path.Contains("favicon") ? null : GetSession(ListenerContext);
-            if (Session != null)
-                HTTPResponse.Cookies = Session.Cookies;
-            #endregion Init_Session
+            #endregion Init_Request
 
             #region Init_Response
             Response Response = new Response(HTTPResponse);
             #endregion Init_Response
+
+            if (APIServer.Settings.ACCESS_PASSWORD != "")
+            {
+                var cookie = ListenerContext.Request.Cookies["ACCESS_PASSWORD"];
+
+                if (cookie == null || cookie.Value != APIServer.Settings.ACCESS_PASSWORD)
+                {
+                    string response = "Access Denied [ACCESS_PASSWORD]<br><button onclick='document.cookie=`ACCESS_PASSWORD=` + prompt(`Password`) + `; expires=Fri, 31 Dec 9999 23:59:59 GMT`; location.reload();'>Set Password</button>";
+                    Response.ContentType = "text/html; charset=utf-8";
+                    Response.Write(response);
+                    MyLog.Core.Write    ($"Request (from: {Request.ClientIPAddress}) blocked by [ACCESS_PASSWORD]", LogSeverity.Warning);
+                    MyLog.Requests.Write($"Request (from: {Request.ClientIPAddress}) blocked by [ACCESS_PASSWORD]", LogSeverity.Warning);
+
+                    goto RequestFinished;
+                }
+            }
+
+            #region Init_Session
+            Session Session = Request.Path.Contains("favicon") ? null : GetSession(ListenerContext);
+            //if (Session != null)
+            //    HTTPResponse.Cookies = Session.Cookies;
+            #endregion Init_Session
 
             GET GET = null;
             POST POST = null;
@@ -250,7 +267,7 @@ namespace Space.NET.HTTP
                 string Unique = Context.Request.RemoteEndPoint.ToString() + DateTime.UtcNow.Ticks.ToString();
                 string SessionID = Hashing.GetHash(Hashing.SHA256, Unique);
 
-                Context.Request.Cookies.Add(new Cookie("SessionID", SessionID, "/"));
+                Context.Response.SetCookie(new Cookie("SessionID", SessionID, "/"));
 
                 var Session = new Session(SessionID, Context.Request.Cookies);
                 Sessions.Add(Session);

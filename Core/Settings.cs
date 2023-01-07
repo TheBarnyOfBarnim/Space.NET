@@ -1,8 +1,8 @@
 ﻿/*!
  * Space.NET - a platform independent HTTP Server, running with .NET and C#.
- * https://github.com/PylonDev/Space.NET
- * Copyright (C) 2022 Endric Barnekow <pylon@pylonmediagroup.de>
- * https://github.com/PylonDev/Space.NET/blob/master/LICENSE.md
+ * https://github.com/TheBarnyOfBarnim/Space.NET
+ * Copyright (C) 2023 Endric Barnekow <mail@e-barnekow.de>
+ * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
 using Space.NET.Utilities;
@@ -37,6 +37,9 @@ namespace Space.NET.Core
         [JsonPropertyAttribute]
         public int DefaultPort { get; set; }
 
+        [JsonPropertyAttribute]
+        public string ACCESS_PASSWORD { get; set; }
+
 
         internal static Settings GetSettingsFromConfig()
         {
@@ -63,6 +66,7 @@ namespace Space.NET.Core
             string ServerRootFolderPath;
             string[] Prefixes;
             int defaultPort;
+            string accessPassword;
 
             #region AskUser
             ServerRootFolderPath = ConsoleQuestions.AskPathInput("Where should the WebServer Root Folder be?");
@@ -81,9 +85,11 @@ namespace Space.NET.Core
                 Prefixes = PrefixesAnswer.Split(",");
             }
 
+            accessPassword = ConsoleQuestions.AskStringInput("Should the WebServer have a password, \nso clients can only request data if they have the correct \nCookie 'ACCESS_PASSWORD'? []");
+
             #endregion AskUser
 
-            var settings = new Settings() {DefaultPort = defaultPort, ServerRoot= ServerRootFolderPath, Prefixes = Prefixes};
+            var settings = new Settings() {DefaultPort = defaultPort, ServerRoot= ServerRootFolderPath, Prefixes = Prefixes, ACCESS_PASSWORD = accessPassword };
             settings.Verify();
 
             ConsoleQuestions.WriteQuestionHead("All settings are set! Saving file to 'Config.json' in the current Folder.");

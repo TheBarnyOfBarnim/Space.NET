@@ -1,8 +1,8 @@
 ﻿/*!
  * Space.NET - a platform independent HTTP Server, running with .NET and C#.
- * https://github.com/PylonDev/Space.NET
- * Copyright (C) 2022 Endric Barnekow <pylon@pylonmediagroup.de>
- * https://github.com/PylonDev/Space.NET/blob/master/LICENSE.md
+ * https://github.com/TheBarnyOfBarnim/Space.NET
+ * Copyright (C) 2023 Endric Barnekow <mail@e-barnekow.de>
+ * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
 using System;
@@ -24,18 +24,24 @@ namespace Space.NET.API.Utilities
         {
             get
             {
-                if (Parameters.ContainsKey(Name))
-                    return Parameters[Name];
-                else
-                    return null;
+                lock (this)
+                { 
+                    if (Parameters.ContainsKey(Name))
+                        return Parameters[Name];
+                    else
+                        return null;
+                }
             }
 
             set
             {
-                if (Parameters.ContainsKey(Name))
-                    Parameters[Name] = value;
-                else
-                    Parameters.Add(Name, value);
+                lock (this)
+                {
+                    if (Parameters.ContainsKey(Name))
+                        Parameters[Name] = value;
+                    else
+                        Parameters.Add(Name, value);
+                }
             }
         }
 

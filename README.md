@@ -6,7 +6,7 @@
 **Space.NET** is a platform independent `HTTP Server` that is running with `.NET` and the programming language `C#`. This project was inspired by the well-known HTTP Server `Apache`. Instead of programming scripts in `PHP` and the file extension `*.php`, you write scripts in `C#` with the file extension `\*.cshtml`.
   
 Feel free to use Space.NET on your own Projects.
-⚠️ If you find and <a href="https://github.com/PylonDev/Space.NET/issues">issues</a> or you want to <a href="https://github.com/PylonDev/Space.NET/issues">contribute</a>, feel free to do so!  
+⚠️ If you find and <a href="https://github.com/TheBarnyOfBarnim/Space.NET/issues">issues</a> or you want to <a href="https://github.com/TheBarnyOfBarnim/Space.NET/issues">contribute</a>, feel free to do so!  
 
 ___
 
@@ -25,9 +25,9 @@ ___
 ⚠️IMPORTANT⚠️: First, in order to run Space.NET, you need to install the latest version of <a href="https://dotnet.microsoft.com/en-us/download">.NET</a>
 
 
-1. Download the latest <a href="https://github.com/PylonDev/CSharp-WebServer/releases">Release</a> (`Space-NET.zip`)  
+1. Download the latest <a href="https://github.com/TheBarnyOfBarnim/CSharp-WebServer/releases">Release</a> (`Space-NET.zip`)  
 Extract the archive into an empty folder
-2. Download the latest <a href="https://github.com/PylonDev/CSharp-WebServer/releases">Template</a> (`Template_Root_Folder.zip`)  
+2. Download the latest <a href="https://github.com/TheBarnyOfBarnim/CSharp-WebServer/releases">Template</a> (`Template_Root_Folder.zip`)  
 Extract the Template into another empty folder [`ServerRoot`]
 4. Execute Space.NET with **elevated rights**⚠️  
   On `Windows` => Simply execute the Space-NET.exe  

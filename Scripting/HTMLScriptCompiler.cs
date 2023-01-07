@@ -1,8 +1,8 @@
 ﻿/*!
  * Space.NET - a platform independent HTTP Server, running with .NET and C#.
- * https://github.com/PylonDev/Space.NET
- * Copyright (C) 2022 Endric Barnekow <pylon@pylonmediagroup.de>
- * https://github.com/PylonDev/Space.NET/blob/master/LICENSE.md
+ * https://github.com/TheBarnyOfBarnim/Space.NET
+ * Copyright (C) 2023 Endric Barnekow <mail@e-barnekow.de>
+ * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
 using Microsoft.CodeAnalysis.CSharp;
@@ -26,6 +26,8 @@ using System.Text;
 using Space.NET.API.Utilities;
 using static System.Net.WebRequestMethods;
 using System.Text.Json;
+using System.Security.Cryptography;
+using Space.NET.Utilities;
 
 namespace Space.NET.CSharp
 {
@@ -52,7 +54,8 @@ namespace Space.NET.CSharp
                                   "using Space.NET.API;" +
                                   "using Space.NET.API.Utilities;" +
                                   "using System.Xml.Linq;" +
-                                  "using System.Reflection;";
+                                  "using System.Reflection;" +
+                                  "using Space.NET.Utilities;";
 
             CodeOnionTop += "public static class " + Hash + " {";
 
@@ -79,6 +82,7 @@ namespace Space.NET.CSharp
                 "Space.NET.API.Utilities",
                 "System.Xml.Linq",
                 "System.Reflection",
+                "Space.NET.Utilities",
 
             };
             
@@ -87,6 +91,8 @@ namespace Space.NET.CSharp
             {
                 MetadataReference.CreateFromFile(typeof(Request).Assembly.Location), //Space.NET.API
                 MetadataReference.CreateFromFile(typeof(Hashing).Assembly.Location), //Space.NET.API.Utilities
+                MetadataReference.CreateFromFile(typeof(MyLog).Assembly.Location), //Space.NET.API.Utilities
+                MetadataReference.CreateFromFile(typeof(MD5).Assembly.Location),
 
 #region .NET
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
@@ -258,7 +264,7 @@ namespace Space.NET.CSharp
                 assemblyName: Path.GetFileName("ExternalCode"),
                 syntaxTrees: new[] { CSharpSyntaxTree.ParseText(NewCode) },
                 references: references,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: DefaultNamespaces)
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: DefaultNamespaces, optimizationLevel: OptimizationLevel.Debug )
             );
 
 

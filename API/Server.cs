@@ -1,8 +1,8 @@
 ﻿/*!
  * Space.NET - a platform independent HTTP Server, running with .NET and C#.
- * https://github.com/PylonDev/Space.NET
- * Copyright (C) 2022 Endric Barnekow <pylon@pylonmediagroup.de>
- * https://github.com/PylonDev/Space.NET/blob/master/LICENSE.md
+ * https://github.com/TheBarnyOfBarnim/Space.NET
+ * Copyright (C) 2023 Endric Barnekow <mail@e-barnekow.de>
+ * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
 using System;
@@ -14,6 +14,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
+using Space.NET.API.Utilities;
 using Space.NET.Core;
 
 namespace Space.NET.API
@@ -30,6 +31,10 @@ namespace Space.NET.API
         public string LogFilesFolder => Path.Combine(Settings.ServerRoot, Settings.LogsFolder);
         public string ErrorDocsFolder => Path.Combine(Settings.ServerRoot, Settings.ErrorDocsFolder);
         public string DocumentRoot => Path.Combine(Settings.ServerRoot, Settings.DocumentRootFolder);
+
+
+        public IndexerObject Globals = new IndexerObject();
+
 
         public override string ToString()
         {

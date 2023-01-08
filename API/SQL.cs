@@ -46,7 +46,8 @@ namespace Space.NET.API
             internal DataBase(MySqlConnection conn)
             {
                 Connection = conn;
-                Connection.Open();
+                if (Connection.State != ConnectionState.Open)
+                    Connection.Open();
             }
 
             public void Dispose()
@@ -57,6 +58,9 @@ namespace Space.NET.API
 
             public DataTable ExecCommand(string SQLCommand, string[] Parameters = null, object[] Values = null)
             {
+                if(Connection.State != ConnectionState.Open)
+                    Connection.Open();
+
                 try
                 {
                     Parameters = Parameters == null ? new string[0] : Parameters;

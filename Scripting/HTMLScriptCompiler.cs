@@ -311,33 +311,3 @@ namespace Space.NET.CSharp
         }
     }
 }
-
-/*
-
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CSharp.RuntimeBinder;
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace C_Sharp_Compile_Test
-{
-    internal static class PresetCompiler
-    {
-        internal static Func<dynamic> Compile(string Code)
-        {
-
-            
-        }
-    }
-}
-
-*/

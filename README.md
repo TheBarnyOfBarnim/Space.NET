@@ -49,7 +49,7 @@ ___
 ## Executing the Webserver
 Execute Space.NET with **elevated rights**⚠️  
   On `Windows` => Simply execute the Space-NET.exe  
-  On `Linux` => execute the Space-NET.dll with an Terminal-Application via the following command: "`dotnet Space-NET.dll`"
+  On `Linux` => execute the Space-NET.dll with an Terminal-Application via the following command: "`sudo dotnet Space-NET.dll`"
 
 ___
 

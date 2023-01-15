@@ -102,7 +102,8 @@ namespace Space.NET.HTTP
             Response Response = new Response(HTTPResponse);
             #endregion Init_Response
 
-            if (APIServer.Settings.ACCESS_PASSWORD != "")
+            #region ACCESS_PASSWORD
+            if (APIServer.Settings.ACCESS_PASSWORD != "" && Path.GetFileName(Request.RealPath) != "favicon.ico")
             {
                 var cookie = ListenerContext.Request.Cookies["ACCESS_PASSWORD"];
 
@@ -117,6 +118,7 @@ namespace Space.NET.HTTP
                     goto RequestFinished;
                 }
             }
+            #endregion ACCESS_PASSWORD
 
             #region Init_Session
             Session Session = Request.Path.Contains("favicon") ? null : GetSession(ListenerContext);

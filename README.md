@@ -3,7 +3,7 @@
 
 <a name="info"></a>
 ## Information
-**Space.NET** is a platform independent `HTTP Server` that is running with `.NET` and the programming language `C#`. This project was inspired by the well-known HTTP Server `Apache`. Instead of programming scripts in `PHP` and the file extension `*.php`, you write scripts in `C#` with the file extension `\*.cshtml`.
+**Space.NET** is a platform independent `HTTP Server` that is running with `.NET` and the programming language `C#`. This project was inspired by the well-known HTTP Server `Apache`. Instead of programming scripts in `PHP` and the file extension `*.php`, you write scripts in `C#` with the file extension `*.cshtml`.
   
 Feel free to use Space.NET on your own Projects.
 ⚠️ If you find and <a href="https://github.com/TheBarnyOfBarnim/Space.NET/issues">issues</a> or you want to <a href="https://github.com/TheBarnyOfBarnim/Space.NET/issues">contribute</a>, feel free to do so!  

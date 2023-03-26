@@ -5,7 +5,7 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using Space.NET.Utilities;
+using SpaceNET.Utilities;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.Engines;
 using System;
@@ -17,7 +17,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Space.NET.Core
+namespace SpaceNET.Core
 {
     public class Settings
     {
@@ -25,7 +25,8 @@ namespace Space.NET.Core
         internal const string LogsFolder = "Logs";
         internal const string ErrorDocsFolder = "ErrorDocs";
         internal const string DocumentRootFolder = "DocumentRoot";
-        
+        internal const string StaticFolder = "Static";
+
 
         internal bool FileExists = true;
 
@@ -109,6 +110,55 @@ namespace Space.NET.Core
                 Directory.CreateDirectory(Path.Combine(ServerRoot, LogsFolder));
                 Directory.CreateDirectory(Path.Combine(ServerRoot, ErrorDocsFolder));
                 Directory.CreateDirectory(Path.Combine(ServerRoot, DocumentRootFolder));
+                Directory.CreateDirectory(Path.Combine(ServerRoot, StaticFolder));
+
+                if (File.Exists(Path.Combine(ServerRoot, ErrorDocsFolder, "400.cshtml")) == false)
+                    File.WriteAllText(Path.Combine(ServerRoot, ErrorDocsFolder, "400.cshtml"), @"<cs>Response.StatusCode = 400;</cs>
+                                                                                     <html>
+                                                                                     	<head>
+                                                                                     		<title>400: Bad Request</title>
+                                                                                     	</head>
+                                                                                     	<body style=""max-width:50%"">
+                                                                                        		<div style=""padding: 10px; border: solid; border-width: 3px;"">
+                                                                                     			<h1 style=""color:red;"">Bad Request</h1>
+                                                                                         		<p>The Server received invalid Form-Data from the User.</p>
+                                                                                         		<p>Please contact the server administrator and inform them of the time the error occured, and anything you might have done before that may have caused the error.</p>
+                                                                                         		<p>&nbsp;</p>
+                                                                                         		<p>More information about this error may be available in the server's Core Log.</p>
+                                                                                     		</div>   
+                                                                                     	</body>
+                                                                                     </html>");
+
+                if (File.Exists(Path.Combine(ServerRoot, ErrorDocsFolder, "404.cshtml")) == false)
+                    File.WriteAllText(Path.Combine(ServerRoot, ErrorDocsFolder, "404.cshtml"), @"<cs>Response.StatusCode = 404;</cs>
+                                                                                     <html>
+                                                                                     	<head>
+                                                                                     		<title>404: Not Found</title>
+                                                                                     	</head>
+                                                                                     	<body style=""max-width:50%"">
+                                                                                        		<div style=""padding: 10px; border: solid; border-width: 3px;"">
+                                                                                     			<h1 style=""color:red;"">Not Found</h1>
+                                                                                         		<p>The resource you are looking for does not exist on the server.</p>
+                                                                                     		</div>   
+                                                                                     	</body>
+                                                                                     </html>");
+
+                if (File.Exists(Path.Combine(ServerRoot, ErrorDocsFolder, "500.cshtml")) == false)
+                    File.WriteAllText(Path.Combine(ServerRoot, ErrorDocsFolder, "500.cshtml"), @"<cs>Response.StatusCode = 500;</cs>
+                                                                                     <html>
+                                                                                     	<head>
+                                                                                     		<title>500: Internal Server Error</title>
+                                                                                     	</head>
+                                                                                     	<body style=""max-width:50%"">
+                                                                                        		<div style=""padding: 10px; border: solid; border-width: 3px;"">
+                                                                                     			<h1 style=""color:red;"">Internal Server Error</h1>
+                                                                                         		<p>The Server encountered an internal Error.</p>
+                                                                                         		<p>Please contact the server administrator and inform them of the time the error occured, and anything you might have done before that may have caused the error.</p>
+                                                                                         		<p>&nbsp;</p>
+                                                                                         		<p>More information about this error may be available in the server's Core Log.</p>
+                                                                                     		</div>   
+                                                                                     	</body>
+                                                                                     </html>");
             }
             catch (Exception ex) { Console.WriteLine("[Error] Settings.Verify();\n" + ex.ToString()); Program.Stop(); }
         }

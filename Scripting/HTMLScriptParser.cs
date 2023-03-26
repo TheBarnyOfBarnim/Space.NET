@@ -5,8 +5,8 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using Space.NET.Core;
-using Space.NET.HTTP;
+using SpaceNET.Core;
+using SpaceNET.HTTP;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -19,8 +19,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Threading;
+using SpaceNET.API;
+using System.Reflection;
 
-namespace Space.NET.CSharp
+namespace SpaceNET.CSharp
 {
     internal static class HTMLScriptParser
     {
@@ -50,7 +52,7 @@ namespace Space.NET.CSharp
                             if (path.StartsWith("."))
                             {
                                 path = path.Remove(0, 1);
-                                path = path.Insert(0, HTTPServer.APIServer.DocumentRoot);
+                                path = path.Insert(0, Server.DocumentRoot);
                             }
                             else if (path.StartsWith("__FILE__"))
                             {
@@ -60,9 +62,13 @@ namespace Space.NET.CSharp
                             else if (path.StartsWith("__ErrorDocs__"))
                             {
                                 path = path.Remove(0, "__ErrorDocs__".Length);
-                                path = path.Insert(0, Path.Combine(HTTPServer.APIServer.ServerRoot, "ErrorDocs"));
+                                path = path.Insert(0, Path.Combine(Server.ServerRoot, Settings.ErrorDocsFolder));
                             }
-
+                            else if (path.StartsWith("__StaticFolder__"))
+                            {
+                                path = path.Remove(0, "__StaticFolder__".Length);
+                                path = path.Insert(0, Path.Combine(Server.ServerRoot, Settings.StaticFolder));
+                            }
 
                             var includedText = "";
                             includedText += "</cs>";

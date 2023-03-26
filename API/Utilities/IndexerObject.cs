@@ -14,7 +14,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Space.NET.API.Utilities
+namespace SpaceNET.API.Utilities
 {
     public class IndexerObject
     {

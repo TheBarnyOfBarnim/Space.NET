@@ -5,11 +5,11 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using Space.NET.API;
-using Space.NET.API.Utilities;
-using Space.NET.Core;
-using Space.NET.CSharp;
-using Space.NET.Utilities;
+using SpaceNET.API;
+using SpaceNET.API.Utilities;
+using SpaceNET.Core;
+using SpaceNET.CSharp;
+using SpaceNET.Utilities;
 using HttpMultipartParser;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System;
@@ -23,13 +23,15 @@ using System.Threading.Tasks;
 using System.Web;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
+using Org.BouncyCastle.Utilities.Zlib;
+using System.Threading;
 
-namespace Space.NET.HTTP
+namespace SpaceNET.HTTP
 {
     internal static class HTTPServer
     {
         private static HttpListener HttpListener;
-        internal static Server APIServer;
+        //internal static Server APIServer;
 
         internal static List<Session> Sessions = new List<Session>();
 
@@ -37,7 +39,9 @@ namespace Space.NET.HTTP
         internal static void Initialize(Settings settings)
         {
             HttpListener = new HttpListener();
-            APIServer = new Server(settings);
+
+            Server.Settings = settings;
+            //APIServer = new Server(settings);
 
             #region AddPrefixes
             var CorePrefix = "http://127.0.0.1:" + settings.DefaultPort + "/";
@@ -68,8 +72,6 @@ namespace Space.NET.HTTP
 
             #endregion AddPrefixes
             MyLog.Core.Write("Prefixes Added!");
-
-            CompiledScripts.Initialize();
         }
 
 
@@ -81,6 +83,7 @@ namespace Space.NET.HTTP
             while (true)
             {
                 var Context = HttpListener.GetContext();
+                //ThreadPool.QueueUserWorkItem(delegate(object stateInfo) { HandleRequest(Context); });
                 new Task(() => { HandleRequest(Context); }).Start();
             }
         }
@@ -90,7 +93,7 @@ namespace Space.NET.HTTP
         {
             HttpListenerRequest HTTPRequest = ListenerContext.Request;
             HttpListenerResponse HTTPResponse = ListenerContext.Response;
-
+            
             #region Init_Request
             Request Request = GetRequest(ListenerContext);
             LogRequest(Request);
@@ -103,11 +106,11 @@ namespace Space.NET.HTTP
             #endregion Init_Response
 
             #region ACCESS_PASSWORD
-            if (APIServer.Settings.ACCESS_PASSWORD != "" && Path.GetFileName(Request.RealPath) != "favicon.ico")
+            if (Server.Settings.ACCESS_PASSWORD != "" && Path.GetFileName(Request.RealPath) != "favicon.ico")
             {
                 var cookie = ListenerContext.Request.Cookies["ACCESS_PASSWORD"];
 
-                if (cookie == null || cookie.Value != APIServer.Settings.ACCESS_PASSWORD)
+                if (cookie == null || cookie.Value != Server.Settings.ACCESS_PASSWORD)
                 {
                     string response = "Access Denied [ACCESS_PASSWORD]<br><button onclick='document.cookie=`ACCESS_PASSWORD=` + prompt(`Password`) + `; expires=Fri, 31 Dec 9999 23:59:59 GMT`; location.reload();'>Set Password</button>";
                     Response.ContentType = "text/html; charset=utf-8";
@@ -129,54 +132,60 @@ namespace Space.NET.HTTP
             GET GET = null;
             POST POST = null;
 
-            var Context = new RequestContext(APIServer, Request, Session, GET, POST, Response);
+            var Context = new RequestContext(Request, Session, GET, POST, null, Response);
 
-            #region Parse_FormData
-
-
-            (Dictionary<string, string>, Dictionary<string, FormFile>) ParsedFormData;
-
-            try
+            WebSocket WebSocket = null;
+            if (HTTPRequest.IsWebSocketRequest)
             {
-                if (HTTPRequest.ContentType != null &&
-                    HTTPRequest.ContentType.StartsWith("multipart/form-data"))
-                {
-                    var FormDataParser = MultipartFormDataParser.Parse(HTTPRequest.InputStream, HTTPRequest.ContentType.Split("; boundary=")[1], HTTPRequest.ContentEncoding);
-                    ParsedFormData = ParseHTMLData(FormDataParser);
-
-                }
-                else
-                {
-
-                    //StreamReader stream = new StreamReader(HTTPRequest.InputStream, HTTPRequest.ContentEncoding);
-                    //string Data = stream.ReadToEnd();
-                    string Data = HTTPRequest.Url.Query;
-                    Data = Data.StartsWith('?') ? Data.Substring(1) : Data;
-                    ParsedFormData = ParseHTMLData(Data);
-                }
-            }
-            catch (Exception ex)
+                WebSocket = new WebSocket(ListenerContext);
+            }else
             {
-                CompiledScripts.ErrorScripts["400"].Execute(Context);
+                #region Parse_FormData
 
-                MyLog.Core.Write("Error parsing Form-Data", LogSeverity.Warning);
-                MyLog.Core.Write(ex, LogSeverity.Warning);
 
-                goto RequestFinished;
+                (Dictionary<string, string>, Dictionary<string, FormFile>) ParsedFormData;
+
+                try
+                {
+                    if (HTTPRequest.ContentType != null &&
+                        HTTPRequest.ContentType.StartsWith("multipart/form-data"))
+                    {
+                        var FormDataParser = MultipartFormDataParser.Parse(HTTPRequest.InputStream, HTTPRequest.ContentType.Split("; boundary=")[1], HTTPRequest.ContentEncoding);
+                        ParsedFormData = ParseHTMLData(FormDataParser);
+
+                    }
+                    else
+                    {
+
+                        //StreamReader stream = new StreamReader(HTTPRequest.InputStream, HTTPRequest.ContentEncoding);
+                        //string Data = stream.ReadToEnd();
+                        string Data = HTTPRequest.Url.Query;
+                        Data = Data.StartsWith('?') ? Data.Substring(1) : Data;
+                        ParsedFormData = ParseHTMLData(Data);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CompiledScripts.ErrorScripts["400"].Execute(Context);
+
+                    MyLog.Core.Write("Error parsing Form-Data", LogSeverity.Warning);
+                    MyLog.Core.Write(ex, LogSeverity.Warning);
+
+                    goto RequestFinished;
+                }
+
+                #endregion Parse_FormData
+
+                #region Init_GET_POST
+
+                if (Request.Method == "GET")
+                    GET = new GET(ParsedFormData.Item1, ParsedFormData.Item2);
+                else if (Request.Method == "POST")
+                    POST = new POST(ParsedFormData.Item1, ParsedFormData.Item2);
+
+                #endregion Init_GET_POST
             }
-
-            #endregion Parse_FormData
-
-            #region Init_GET_POST
-
-            if (Request.Method == "GET")
-                GET = new GET(ParsedFormData.Item1, ParsedFormData.Item2);
-            else if (Request.Method == "POST")
-                POST = new POST(ParsedFormData.Item1, ParsedFormData.Item2);
-
-            #endregion Init_GET_POST
-
-            Context = new RequestContext(APIServer, Request, Session, GET, POST, Response);
+            Context = new RequestContext(Request, Session, GET, POST, WebSocket, Response);
             #region HandleFile
             bool IsFile = File.Exists(Request.RealPath);
             bool IsFolder = Directory.Exists(Request.RealPath);
@@ -186,6 +195,8 @@ namespace Space.NET.HTTP
             if (Extension == ".cshtml")
             {
                 Handle_Script(Context);
+                if(Request.IsWebSocketRequest)
+                    goto DontCloseRequest;
             }
             else
             {
@@ -259,6 +270,8 @@ namespace Space.NET.HTTP
 
                 }
             }
+        DontCloseRequest:
+            ;
         }
 
         private static Session GetSession(HttpListenerContext Context)
@@ -290,7 +303,8 @@ namespace Space.NET.HTTP
                                HttpUtility.UrlDecode(Context.Request.Url.AbsolutePath),
                                Context.Request.RemoteEndPoint.ToString(),
                                Context.Request.UserAgent,
-                               Guid.NewGuid().ToString());
+                               Guid.NewGuid().ToString(),
+                               Context.Request.IsWebSocketRequest);
 
             if (request.Path != "/")
                 request.Path += (Directory.Exists(request.RealPath) ? "/" : "");

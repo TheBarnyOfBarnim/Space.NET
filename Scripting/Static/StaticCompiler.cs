@@ -28,79 +28,79 @@ using static System.Net.WebRequestMethods;
 using System.Text.Json;
 using System.Security.Cryptography;
 using SpaceNET.Utilities;
-using SpaceNET.Core;
-using SpaceNET.Scripting.Static;
+using System.Security.Policy;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection.Emit;
+using System.Xml.Linq;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
+using System.Runtime.InteropServices;
+using SpaceNET.CSharp;
 
-namespace SpaceNET.CSharp
+namespace SpaceNET.Scripting.Static
 {
-    internal static class HTMLScriptCompiler
+    internal class StaticCompiler
     {
-        internal static (MethodInfo, string) CompileScript(string Code, string Hash, bool UseFormatting, bool UseArguments)
+        internal static (Assembly, string, string, string) CompileClass(string Code, string FileName)
         {
-            string CompileError = "";
             string UsingMethodCode = "using System;" +
-                                  "using System.Diagnostics;" +
-                                  "using System.Web;" +
-                                  "using System.Collections.Generic;" +
-                                  "using System.IO;" +
-                                  "using System.Data;" +
-                                  "using System.Globalization;" + 
-                                  "using System.Linq;" +
-                                  "using System.Text;" +
-                                  "using System.Text.Json;" +
-                                  "using System.Security.Cryptography;" +
-                                  "using System.Threading;" +
-                                  "using System.Threading.Tasks;" +
-                                  "using System.ComponentModel;" +
-                                  "using System.Net.Mail;" +
-                                  "using SpaceNET.API;" +
-                                  "using SpaceNET.API.Utilities;" +
-                                  "using System.Xml.Linq;" +
-                                  "using System.Reflection;" +
-                                  "using System.Runtime.InteropServices;" +
-                                  "using SpaceNET.Utilities;";
+                      "using System.Diagnostics;" +
+                      "using System.Web;" +
+                      "using System.Collections.Generic;" +
+                      "using System.IO;" +
+                      "using System.Data;" +
+                      "using System.Globalization;" +
+                      "using System.Linq;" +
+                      "using System.Text;" +
+                      "using System.Text.Json;" +
+                      "using System.Security.Cryptography;" +
+                      "using System.Threading;" +
+                      "using System.Threading.Tasks;" +
+                      "using System.ComponentModel;" +
+                      "using System.Net.Mail;" +
+                      "using SpaceNET.API;" +
+                      "using SpaceNET.API.Utilities;" +
+                      "using System.Xml.Linq;" +
+                      "using System.Reflection;" +
+                      "using System.Runtime.InteropServices;" +
+                      "using SpaceNET.Utilities;";
 
-            UsingMethodCode += "public static class " + Hash + " {";
-
-            UsingMethodCode += $"public static void Execute({(UseArguments ? "Request Request, Session Session, GET GET, POST POST, Response Response, WebSocket WebSocket" : "")}) {{";
-            string CodeBottom = "}}";
-      
-            
             IEnumerable<string> DefaultNamespaces =
             new[]
             {
-                "System",
-                "System.Diagnostics",
-                "System.Collections.Generic",
-                "System.IO",
-                "System.Data",
-                "System.Globalization",
-                "System.Linq",
-                "System.Threading",
-                "System.Threading.Tasks",
-                "System.ComponentModel",
-                "System.Net.Mail",
-                "SpaceNET.API",
-                "SpaceNET.API.Utilities",
-                "System.Xml.Linq",
-                "System.Reflection",
-                "System.Runtime.InteropServices",
-                "SpaceNET.Utilities"
-
-            };
+                            "System",
+                            "System.Diagnostics",
+                            "System.Collections.Generic",
+                            "System.IO",
+                            "System.Data",
+                            "System.Globalization",
+                            "System.Linq",
+                            "System.Threading",
+                            "System.Threading.Tasks",
+                            "System.ComponentModel",
+                            "System.Net.Mail",
+                            "SpaceNET.API",
+                            "SpaceNET.API.Utilities",
+                            "System.Xml.Linq",
+                            "System.Reflection",
+                            "System.Runtime.InteropServices",
+                            "SpaceNET.Utilities",
             
+            };
+
+
+
+
             var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
-            List<MetadataReference> references = new List<MetadataReference>
+            List<MetadataReference> references = new List<MetadataReference>()
             {
                 MetadataReference.CreateFromFile(typeof(Request).Assembly.Location), //SpaceNET.API
                 MetadataReference.CreateFromFile(typeof(Hashing).Assembly.Location), //SpaceNET.API.Utilities
                 MetadataReference.CreateFromFile(typeof(MyLog).Assembly.Location), //SpaceNET.API.Utilities
+
 #region .NET
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(IXmlSerializable).Assembly.Location),
-                
+
                 MetadataReference.CreateFromFile(typeof(MD5).Assembly.Location),
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "Microsoft.CSharp.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "Microsoft.VisualBasic.Core.dll")),
@@ -263,6 +263,7 @@ namespace SpaceNET.CSharp
 #endregion .NET
             };
 
+
             #region ImportLibraryStatements
             {
                 var lines = Code.Split("\n");
@@ -283,7 +284,7 @@ namespace SpaceNET.CSharp
                             {
                                 try
                                 {
-                                    Assembly.LoadFrom(path);
+                                    var a = Assembly.LoadFrom(path);
                                     references.Add(MetadataReference.CreateFromFile(path));
                                     Code = Code.Replace(StatementMatch.Value, "\n");
                                 }
@@ -301,7 +302,7 @@ namespace SpaceNET.CSharp
                             if (ex != null)
                             {
                                 var error = "";
-                                error += @"<pre style='font-family: ""Courier New""; white-space: pre-wrap;'>";
+                                error += @"<pre style='font-family: ""Courier New"";'>";
                                 error += $"{ex.Message}" + "\n";
 
                                 error += $"Code Snippet [{lineNumber}]:\n";
@@ -335,7 +336,7 @@ namespace SpaceNET.CSharp
                                     errorRaw += "\n";
 
 
-                                return (null, error);
+                                return (null, null, error, errorRaw);
                             }
                         }
                     }
@@ -343,25 +344,14 @@ namespace SpaceNET.CSharp
             }
             #endregion
 
-            string NewCode = UsingMethodCode + Code + CodeBottom;
+            string NewCode = UsingMethodCode + "\n" + Code;
 
             foreach (var (filename, staticClass) in CompiledScripts.Statics)
             {
-                if (UseFormatting)
+                if (staticClass.CompileErrorRaw != "")
                 {
-                    if (staticClass.CompileError != "")
-                    {
-                        return (null, staticClass.CompileError);
-                    }
+                    return (null, null, staticClass.CompileError, staticClass.CompileErrorRaw);
                 }
-                else
-                {
-                    if (staticClass.CompileErrorRaw != "")
-                    {
-                        return (null, staticClass.CompileErrorRaw);
-                    }
-                }
-                
 
                 try
                 {
@@ -377,18 +367,21 @@ namespace SpaceNET.CSharp
                 {
 
                 }
-
             }
 
 
+            var TemporaryFile = Path.GetTempFileName();
 
             var comp = CSharpCompilation.Create(
-                assemblyName: Path.GetFileName("ExternalCode"),
+                assemblyName: Path.GetFileName(TemporaryFile),
                 syntaxTrees: new[] { CSharpSyntaxTree.ParseText(NewCode) },
                 references: references,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: DefaultNamespaces, optimizationLevel: OptimizationLevel.Debug )
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: DefaultNamespaces, optimizationLevel: OptimizationLevel.Debug)
             );
+            
 
+            string CompileError = "";
+            string CompileErrorRaw = ""; 
 
             using (var ms = new MemoryStream())
             {
@@ -401,51 +394,54 @@ namespace SpaceNET.CSharp
                     {
                         var lineNumber = diagnostic.Location.GetLineSpan().StartLinePosition.Line;
 
-                        if (UseFormatting)
-                        {
-                            CompileError += @"<pre style='font-family: ""Courier New""; white-space: pre-wrap;'>";
-                            CompileError += $"{diagnostic.Id} - {diagnostic.GetMessage(CultureInfo.InvariantCulture)}" + "\n";
+                        CompileError += @"<pre style='font-family: ""Courier New"";'>";
+                        CompileError += $"{diagnostic.Id} - {diagnostic.GetMessage(CultureInfo.InvariantCulture)}" + "\n";
 
-                            CompileError += $"Code Snippet [{lineNumber + 1}]:\n";
+                        CompileError += $"<b>Static/</b>{Path.GetFileName(FileName)} | Code Snippet [{lineNumber}]:\n";
 
-                            if (lineNumber > 1)
-                                CompileError += $"<div style='color:gray;'>    " + HttpUtility.HtmlEncode(NewCode.Split("\n")[lineNumber - 1]) + "</div>";
+                        if (lineNumber > 1)
+                            CompileError += $"<div style='color:gray;'>    " + HttpUtility.HtmlEncode(NewCode.Split("\n")[lineNumber - 1]) + "</div>";
 
-                            CompileError += $"<div style='color:red;'>" + HttpUtility.HtmlEncode("=>  " + NewCode.Split("\n")[lineNumber]) + "</div>";
+                        CompileError += $"<div style='color:red;'>" + HttpUtility.HtmlEncode("=>  " + NewCode.Split("\n")[lineNumber]) + "</div>";
 
-                            if (lineNumber < (NewCode.Split('\n').Length - 1))
-                                CompileError += $"<div style='color:gray;'>    " + HttpUtility.HtmlEncode(NewCode.Split("\n")[lineNumber + 1]) + "\n" + "</div>";
-                            else
-                                CompileError += "\n";
-
-                            CompileError += "</pre><hr>";
-                        }
+                        if (lineNumber < (NewCode.Split('\n').Length - 1))
+                            CompileError += $"<div style='color:gray;'>    " + HttpUtility.HtmlEncode(NewCode.Split("\n")[lineNumber + 1]) + "\n" + "</div>";
                         else
-                        {
-                            CompileError += $"{diagnostic.Id} - {diagnostic.GetMessage(CultureInfo.InvariantCulture)}" + "\n";
-                            CompileError += $"Code Snippet [{lineNumber + 1}]:\n";
+                            CompileError += "\n";
 
-                            if (lineNumber > 1)
-                                CompileError += "    " + NewCode.Split("\n")[lineNumber - 1] + "\n";
+                        CompileError += "</pre><hr>";
 
-                            CompileError += "=>  " + NewCode.Split("\n")[lineNumber] + "\n";
 
-                            if (lineNumber < (NewCode.Split('\n').Length - 1))
-                                CompileError += "    " + NewCode.Split("\n")[lineNumber + 1] + "\n";
-                            else
-                                CompileError += "\n";
-                        }
+
+
+                        CompileErrorRaw += $"{diagnostic.Id} - {diagnostic.GetMessage(CultureInfo.InvariantCulture)}" + "\n";
+                        CompileErrorRaw += $"Static/{Path.GetFileName(FileName)} | Code Snippet [{lineNumber}]:\n";
+
+                        if (lineNumber > 1)
+                            CompileErrorRaw += "    " + NewCode.Split("\n")[lineNumber - 1] + "\n";
+
+                        CompileErrorRaw += "=>  " + NewCode.Split("\n")[lineNumber] + "\n";
+
+                        if (lineNumber < (NewCode.Split('\n').Length - 1))
+                            CompileErrorRaw += "    " + NewCode.Split("\n")[lineNumber + 1] + "\n";
+                        else
+                            CompileErrorRaw += "\n";
                     }
 
-                    return (null, CompileError);
+                    return (null, null, CompileError, CompileErrorRaw);
                 }
                 else
                 {
-                    Assembly ScriptAssembly = Assembly.Load(ms.ToArray());
-                    Type ScriptClass = ScriptAssembly.GetTypes().Where(x => x.Name == Hash).First();
-                    MethodInfo ScriptMethod = ScriptClass.GetMethod("Execute");
+                    var arr = ms.ToArray();
+                    Assembly ScriptAssembly = Assembly.Load(arr);
+                    var generator = new Lokad.ILPack.AssemblyGenerator();
 
-                    return (ScriptMethod, "");
+                    // for ad-hoc serialization
+                    //var bytes = generator.GenerateAssemblyBytes(ScriptAssembly);
+
+                    // direct serialization to disk
+                    generator.GenerateAssembly(ScriptAssembly, TemporaryFile);
+                    return (ScriptAssembly, TemporaryFile, "", "");
                 }
             }
         }

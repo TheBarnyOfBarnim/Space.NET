@@ -5,7 +5,7 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using Space.NET.HTTP;
+using SpaceNET.HTTP;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -13,11 +13,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Space.NET.Utilities;
+using SpaceNET.Utilities;
+using SpaceNET.Scripting.Static;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using SpaceNET.CSharp;
+using System.Reflection;
 
-namespace Space.NET.Core
+namespace SpaceNET.Core
 {
-    public static class CoreServer
+    internal static class CoreServer
     {
         internal static void Initialize(Settings settings)
         {
@@ -26,11 +30,19 @@ namespace Space.NET.Core
             MyLog.Core     = new MyLog(LogFilesPath, "C# WebServer (Core)", "1.0.0");
             MyLog.Requests = new MyLog(LogFilesPath, "C# WebServer (Requests)", "1.0.0");
             MyLog.Requests.WriteInConsole = false;
+
             CrashLog.InitializeCrashLog();
             MyLog.Core.Write("Logs started!");
 
             HTTPServer.Initialize(settings);
             MyLog.Core.Write("HTTPServer initialized!");
+
+
+            CompiledScripts.InitializeStatic();
+
+            CompiledScripts.ExecuteStartScript();
+
+            CompiledScripts.Initialize();
         }
 
         internal static void Start()

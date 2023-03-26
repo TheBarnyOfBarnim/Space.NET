@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Space.NET.Utilities
+namespace SpaceNET.Utilities
 {
     public static class ConsoleQuestions
     {

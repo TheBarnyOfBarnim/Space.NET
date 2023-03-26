@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Space.NET.API
+namespace SpaceNET.API
 {
     public class POST
     {

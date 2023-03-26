@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Space.NET.API
+namespace SpaceNET.API
 {
     public static class SQL
     {

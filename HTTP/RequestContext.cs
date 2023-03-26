@@ -5,31 +5,32 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using Space.NET.API;
+using SpaceNET.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Space.NET.HTTP
+namespace SpaceNET.HTTP
 {
     internal class RequestContext
     {
-        internal readonly Server Server;
+        //internal readonly Server Server;
         internal readonly Request Request;
         internal readonly Session Session;
         internal readonly GET GET;
         internal readonly POST POST;
+        internal readonly WebSocket WebSocket;
         internal readonly Response Response;
 
-        public RequestContext(Server server, Request request, Session session, GET get, POST post, Response response)
+        public RequestContext(Request request, Session session, GET get, POST post, WebSocket webSocket, Response response)
         {
-            Server = server;
             Request = request;
             Session = session;
             GET = get;
             POST = post;
+            WebSocket= webSocket;
             Response = response;
         }
     }

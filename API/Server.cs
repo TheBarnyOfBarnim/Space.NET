@@ -14,29 +14,26 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
-using Space.NET.API.Utilities;
-using Space.NET.Core;
+using SpaceNET.API.Utilities;
+using SpaceNET.Core;
 
-namespace Space.NET.API
+namespace SpaceNET.API
 {
-    public class Server
+    public static class Server
     {
-        public readonly Settings Settings;
-        public Server(Settings settings)
-        {
-            Settings = settings;
-        }
+        public static Settings Settings { get; internal set; }
 
-        public string ServerRoot => Settings.ServerRoot;
-        public string LogFilesFolder => Path.Combine(Settings.ServerRoot, Settings.LogsFolder);
-        public string ErrorDocsFolder => Path.Combine(Settings.ServerRoot, Settings.ErrorDocsFolder);
-        public string DocumentRoot => Path.Combine(Settings.ServerRoot, Settings.DocumentRootFolder);
+        public static string ServerRoot => Settings.ServerRoot;
+        public static string LogFilesFolder => Path.Combine(Settings.ServerRoot, Settings.LogsFolder);
+        public static string ErrorDocsFolder => Path.Combine(Settings.ServerRoot, Settings.ErrorDocsFolder);
+        public static string DocumentRoot => Path.Combine(Settings.ServerRoot, Settings.DocumentRootFolder);
+        public static string StaticFolder => Path.Combine(Settings.ServerRoot, Settings.StaticFolder);
 
 
-        public IndexerObject Globals = new IndexerObject();
+        public static IndexerObject Globals = new IndexerObject();
 
 
-        public override string ToString()
+        public static new string ToString()
         {
             string output = "";
 

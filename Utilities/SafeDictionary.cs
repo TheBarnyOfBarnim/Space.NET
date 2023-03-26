@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Space.NET.Utilities
+namespace SpaceNET.Utilities
 {
     internal class SafeDictionary<TKey, TValue> : Dictionary<TKey, TValue>
     {

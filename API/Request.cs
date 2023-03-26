@@ -12,10 +12,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Space.NET.Core;
-using Space.NET.HTTP;
+using SpaceNET.Core;
+using SpaceNET.HTTP;
 
-namespace Space.NET.API
+namespace SpaceNET.API
 {
     public class Request
     {
@@ -24,13 +24,14 @@ namespace Space.NET.API
         public string URLFolder => (System.IO.Path.GetDirectoryName(URL) + "").Replace("\\", "/");
         public string Path { get; internal set; }
         public string WebFolder => (System.IO.Path.GetDirectoryName(Path) + "").Replace("\\", "/");
-        public string RealPath => System.IO.Path.GetFullPath(System.IO.Path.Combine(HTTPServer.APIServer.DocumentRoot + Path));
+        public string RealPath => System.IO.Path.GetFullPath(System.IO.Path.Combine(Server.DocumentRoot + Path));
         public string RealPathFolder => System.IO.Path.GetDirectoryName(RealPath);
         public string ClientIPAddress { get; private set; }
         public string UserAgent { get; private set; }
         public string TraceID { get; private set; }
+        public bool IsWebSocketRequest { get; private set; }
 
-        internal Request(string method, string url, string path, string clientIPAdress, string userAgent, string connectionID)
+        internal Request(string method, string url, string path, string clientIPAdress, string userAgent, string connectionID, bool isWebSocketRequest)
         {
             Method = method;
             URL = url;
@@ -38,6 +39,7 @@ namespace Space.NET.API
             ClientIPAddress = clientIPAdress;
             UserAgent = userAgent;
             TraceID = connectionID;
+            IsWebSocketRequest = isWebSocketRequest;
         }
 
         public override string ToString()

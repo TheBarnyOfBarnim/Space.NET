@@ -5,10 +5,11 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using Space.NET.API;
-using Space.NET.API.Utilities;
-using Space.NET.Core;
-using Space.NET.HTTP;
+using SpaceNET.API;
+using SpaceNET.API.Utilities;
+using SpaceNET.Core;
+using SpaceNET.HTTP;
+using SpaceNET.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,10 +20,11 @@ using System.Reflection;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Space.NET.CSharp
+namespace SpaceNET.CSharp
 {
     internal class HTMLScript
     {
@@ -43,12 +45,20 @@ namespace Space.NET.CSharp
                 if (Method == null)
                     throw new Exception();
 
-                var arguments = new object[] { Context.Server, Context.Request, Context.Session, Context.GET, Context.POST, Context.Response };
 
-                Method.Invoke(null, arguments);
+                if (Context != null)
+                {
+                    var arguments = new object[] { Context.Request, Context.Session, Context.GET, Context.POST, Context.Response, Context.WebSocket };
+                    Method.Invoke(null, arguments);
+                }
+                else
+                    Method.Invoke(null, null);
             }
             catch (Exception ex)
             {
+                if (Context == null)
+                    throw ex;
+
                 Hash = null;
                 string Head = (Method == null ? "A compile error occured!" : "A Runtime error occured!");
 
@@ -64,33 +74,44 @@ namespace Space.NET.CSharp
                     + Context.Request.TraceID +
                     "</footer>");
             }
-
         }
 
-        internal void Compile()
+        internal void Compile(bool UseParsing = true, bool UseArguments = true)
         {
             string FileData = File.ReadAllText(RealFilePath);
             string ParsedFile = "";
 
-            try
+            if (UseParsing)
             {
-                ParsedFile = HTMLScriptParser.CombineToCode(HTMLScriptParser.ParseText(FileData, new FileInfo(RealFilePath).Directory.FullName));
-                Hash = "C_" + API.Utilities.Hashing.GetHash(Hashing.SHA1, ParsedFile);
+                try
+                {
+                    ParsedFile = HTMLScriptParser.CombineToCode(HTMLScriptParser.ParseText(FileData, new FileInfo(RealFilePath).Directory.FullName));
+                }
+                catch (Exception ex)
+                {
+                    CompileError = "Cannot Parse File: " + Path.GetRelativePath(Server.DocumentRoot, RealFilePath) + "\n" + ex.ToString();
+                    Method = null;
+                    return;
+                }
             }
-            catch (Exception ex)
+            else
             {
-                CompileError = "Cannot Parse File: " + Path.GetRelativePath(HTTPServer.APIServer.DocumentRoot, RealFilePath) + "\n" + ex.ToString();
-                Method = null;
-                return;
+                ParsedFile = FileData;
             }
+
+            Hash = "C_" + API.Utilities.Hashing.GetHash(Hashing.SHA1, ParsedFile);
 
             string Code = "";
             Code += ParsedFile;
-            Code += @"void print(object __"+ Hash + "__) { if(__" + Hash + "__ != null){Response.ContentType = \"text/html; charset=utf-8\"; Response.Write(__" + Hash +"__.ToString());}}";
+            if(UseArguments)
+                Code += @"void print(object __"+ Hash + "__) { if(__" + Hash + "__ != null){Response.ContentType = \"text/html; charset=utf-8\"; Response.Write(__" + Hash +"__.ToString());}}";
 
-            var CompileResult = HTMLScriptCompiler.CompileScript(Code, ParsedFile, Hash);
+            var CompileResult = HTMLScriptCompiler.CompileScript(Code, Hash, UseParsing, UseArguments);
             Method = CompileResult.Item1;
             CompileError = CompileResult.Item2;
+
+            MyLog.Core.Write("(Re-)Compiled " + Path.GetRelativePath(Server.ServerRoot, RealFilePath) + "\nResult: " + (CompileError.Length == 0 ? "Success!" : Regex.Replace(CompileError, "<[^>]*>", "")));
+
             if (CompileError.Length > 0)
                 Method = null;
         }

@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="HttpMultipartParser" Version="7.0.0" />
+    <PackageReference Include="Lokad.ILPack" Version="0.2.0" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.3.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.3.0" />
     <PackageReference Include="MySql.Data" Version="8.0.30" />

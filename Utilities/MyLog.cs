@@ -19,7 +19,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Space.NET.Utilities
+namespace SpaceNET.Utilities
 {
     public class MyLog
     {
@@ -44,6 +44,7 @@ namespace Space.NET.Utilities
             OnWrite += (t) => { };
             FolderPath = folderPath;
             Init(FolderPath, appName, appversion);
+            Write("Log Path: " + Path.Combine(FolderPath, GetLogFileName(appName)));
         }
 
         private void Init(string FolderPath, string appName, string appversion)

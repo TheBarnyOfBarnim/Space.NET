@@ -53,6 +53,7 @@ namespace SpaceNET.API
             MemoryStream ms = new MemoryStream();
             while (State == WebSocketState.Open)
             {
+                ms.Position = 0;
                 WebSocketReceiveResult result;
                 var length = 0;
                 do
@@ -71,7 +72,7 @@ namespace SpaceNET.API
                     length += result.Count;
                 }
                 while (!result.EndOfMessage);
-
+                
                 ms.SetLength(length);
 
                 if (result.MessageType == WebSocketMessageType.Text)

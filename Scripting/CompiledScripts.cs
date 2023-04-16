@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SpaceNET.Utilities;
 using SpaceNET.Scripting.Static;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+//using static System.Runtime.InteropServices.JavaScript.JSType;
 using SpaceNET.CSharp;
 using System.Reflection;
 using SpaceNET.Core;

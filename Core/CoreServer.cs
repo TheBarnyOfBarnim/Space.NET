@@ -15,9 +15,9 @@ using System.Text;
 using System.Threading.Tasks;
 using SpaceNET.Utilities;
 using SpaceNET.Scripting.Static;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using SpaceNET.CSharp;
 using System.Reflection;
+using SpaceNET.API;
 
 namespace SpaceNET.Core
 {
@@ -36,6 +36,8 @@ namespace SpaceNET.Core
 
             HTTPServer.Initialize(settings);
             MyLog.Core.Write("HTTPServer initialized!");
+
+            MyLog.Core.Write(Server.ToString());
 
 
             CompiledScripts.InitializeStatic();

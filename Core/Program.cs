@@ -17,8 +17,18 @@ namespace SpaceNET.Core
 {
     internal class Program
     {
+        public static string[] Arguments = new string[0];
+
         static void Main(string[] args)
         {
+            Arguments = args;
+            Console.WriteLine("Arguments:");
+            foreach (var arg in Arguments)
+            {
+                Console.WriteLine("\t" + arg);
+            }
+
+
             var settings = Settings.GetSettingsFromConfig();
 
 

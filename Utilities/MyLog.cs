@@ -50,6 +50,7 @@ namespace SpaceNET.Utilities
         private void Init(string FolderPath, string appName, string appversion)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(FolderPath, GetLogFileName(appName))));
+            File.WriteAllText(Path.Combine(FolderPath, GetLogFileName(appName)), "");
             stream = File.Open(Path.Combine(FolderPath, GetLogFileName(appName)), FileMode.Create, FileAccess.Write, FileShare.Read);
             textWriter = TextWriter.Synchronized(new StreamWriter(stream, new UTF8Encoding(false, false)));
             Initialized = true;

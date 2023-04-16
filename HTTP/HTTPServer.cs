@@ -25,6 +25,7 @@ using static System.Net.WebRequestMethods;
 using File = System.IO.File;
 using Org.BouncyCastle.Utilities.Zlib;
 using System.Threading;
+using System.Linq;
 
 namespace SpaceNET.HTTP
 {
@@ -93,10 +94,11 @@ namespace SpaceNET.HTTP
         {
             HttpListenerRequest HTTPRequest = ListenerContext.Request;
             HttpListenerResponse HTTPResponse = ListenerContext.Response;
-            
+
 
             if (Program.Arguments.Contains("-no-cors"))
                 HTTPResponse.AppendHeader("Access-Control-Allow-Origin", "*");
+
             #region Init_Request
             Request Request = GetRequest(ListenerContext);
             LogRequest(Request);

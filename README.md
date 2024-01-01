@@ -1,5 +1,4 @@
 # Space.NET
-<img src="Space.NET Banner.png">Ai-Generated Image by DALL-E-2; Prompt: "Space.NET"
 
 <a name="info"></a>
 ## Information
@@ -61,8 +60,11 @@ Look into the Documentation of the <a href="Docs/API.md#api">API</a>, to underst
 
 ___
 
-<a name="debugScript"></a>
-## Debugging a Script
+<a name="donate"></a>
+<h1>Debugging a Script</h1>
 Debugging a Script is very easy:  
 If the script could not compile or it get's a runtime Exception, just look at the Page in your browser!  
 ⚠️ An option to disable the display of the Exception for the User will be soon inplemented in the Config.json.
+
+---
+[<img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" width="250">](https://www.paypal.com/donate/?hosted_button_id=2HTPPHD6E7XZG)

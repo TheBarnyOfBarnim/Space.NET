@@ -1,3 +1,4 @@
+# ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀PROJECT DISCONTINUED
 # Space.NET
 
 <a name="info"></a>
@@ -5,6 +6,7 @@
 **Space.NET** is a platform independent `HTTP Server` that is running with `.NET` and the programming language `C#`. This project was inspired by the well-known HTTP Server `Apache`. Instead of programming scripts in `PHP` and the file extension `*.php`, you write scripts in `C#` with the file extension `*.cshtml`.
   
 Feel free to use Space.NET on your own Projects.
+
 ⚠️ If you find and <a href="https://github.com/TheBarnyOfBarnim/Space.NET/issues">issues</a> or you want to <a href="https://github.com/TheBarnyOfBarnim/Space.NET/issues">contribute</a>, feel free to do so!  
 
 ___
@@ -63,8 +65,9 @@ ___
 <a name="donate"></a>
 <h1>Debugging a Script</h1>
 Debugging a Script is very easy:  
-If the script could not compile or it get's a runtime Exception, just look at the Page in your browser!  
-⚠️ An option to disable the display of the Exception for the User will be soon inplemented in the Config.json.
+If the script could not compile or it get's a runtime Exception, just look at the Page in your browser! 
+
+⚠️ ~~An option to disable the display of the Exception for the User will be soon inplemented in the Config.json.~~
 
 ---
 [<img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" width="250">](https://www.paypal.com/donate/?hosted_button_id=2HTPPHD6E7XZG)

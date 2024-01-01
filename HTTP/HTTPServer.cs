@@ -307,7 +307,7 @@ namespace SpaceNET.HTTP
         private static Request GetRequest(HttpListenerContext Context)
         {
             string UserIP = Context.Request.RemoteEndPoint.ToString();
-            if (Context.Request.Headers["X-Forwarded-For"].Length > 0)
+            if (Context.Request.Headers.AllKeys.Contains("X-Forwarded-For"))
                 UserIP = Context.Request.Headers["X-Forwarded-For"].Split(new char[] { ',' }).FirstOrDefault(UserIP);
 
 

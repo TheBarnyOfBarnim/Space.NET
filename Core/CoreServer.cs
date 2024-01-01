@@ -5,19 +5,11 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using SpaceNET.HTTP;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SpaceNET.Utilities;
-using SpaceNET.Scripting.Static;
-using SpaceNET.CSharp;
-using System.Reflection;
 using SpaceNET.API;
+using SpaceNET.CSharp;
+using SpaceNET.HTTP;
+using SpaceNET.Utilities;
+using System.IO;
 
 namespace SpaceNET.Core
 {
@@ -27,7 +19,7 @@ namespace SpaceNET.Core
         {
             var LogFilesPath = Path.Combine(settings.ServerRoot, Settings.LogsFolder);
 
-            MyLog.Core     = new MyLog(LogFilesPath, "C# WebServer (Core)", "1.0.0");
+            MyLog.Core = new MyLog(LogFilesPath, "C# WebServer (Core)", "1.0.0");
             MyLog.Requests = new MyLog(LogFilesPath, "C# WebServer (Requests)", "1.0.0");
             MyLog.Requests.WriteInConsole = false;
 

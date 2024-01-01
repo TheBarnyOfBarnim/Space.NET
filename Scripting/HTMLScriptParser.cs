@@ -5,22 +5,13 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
+using SpaceNET.API;
 using SpaceNET.Core;
-using SpaceNET.HTTP;
-using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
-using System.Threading;
-using SpaceNET.API;
-using System.Reflection;
 
 namespace SpaceNET.CSharp
 {
@@ -32,8 +23,8 @@ namespace SpaceNET.CSharp
         //[System.Diagnostics.DebuggerHidden]
         internal static List<(bool, string)> ParseText(string Textinput, string FileDirectory)
         {
-            //Handle a include(""); statement
-            Handle_Include:
+        //Handle a include(""); statement
+        Handle_Include:
             {
                 string[] TextLines = Textinput.Split("\n");
                 Textinput = "";
@@ -100,7 +91,7 @@ namespace SpaceNET.CSharp
             int ReadOffset = 0;
             List<(bool, string)> Parts = new List<(bool, string)>();
 
-            while(ReadOffset < Textinput.Length)
+            while (ReadOffset < Textinput.Length)
             {
                 //Find all Text Till a CodeOpenTag
                 var HTMLBlock = Find(Textinput, CodeOpenTag, ReadOffset);
@@ -109,7 +100,7 @@ namespace SpaceNET.CSharp
                 if (HTMLBlock == null)
                 {
                     var txt = Textinput.Substring(ReadOffset);
-                    if(txt != "\n")
+                    if (txt != "\n")
                         Parts.Add((false, txt));
                     break;
                 }
@@ -189,7 +180,7 @@ namespace SpaceNET.CSharp
                 bool Type = part.Item1;
                 string Text = part.Item2;
 
-                if(Type == true)
+                if (Type == true)
                 {
                     Text += "\n";
                     Code += Text;

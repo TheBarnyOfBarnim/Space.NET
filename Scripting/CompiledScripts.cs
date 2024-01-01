@@ -5,22 +5,14 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using SpaceNET.HTTP;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SpaceNET.Utilities;
-using SpaceNET.Scripting.Static;
-//using static System.Runtime.InteropServices.JavaScript.JSType;
-using SpaceNET.CSharp;
-using System.Reflection;
-using SpaceNET.Core;
-using SpaceNET.API.Utilities;
 using SpaceNET.API;
+using SpaceNET.API.Utilities;
+//using static System.Runtime.InteropServices.JavaScript.JSType;
+using SpaceNET.Core;
+using SpaceNET.Scripting.Static;
+using SpaceNET.Utilities;
+using System;
+using System.IO;
 
 namespace SpaceNET.CSharp
 {
@@ -94,7 +86,7 @@ namespace SpaceNET.CSharp
 
         private static DateTime LastWatcherEvent = DateTime.MinValue;
         private static string LastWatcherEventFName = null;
-        
+
         internal static void InitializeStatic()
         {
             Statics = new SafeDictionary<string, StaticClass>(null);
@@ -144,7 +136,7 @@ namespace SpaceNET.CSharp
                 // Therefore, this workaround is necessary: 
                 // If the last time that the event has been raised is only a few msec away, 
                 // we ignore it.
-                if(LastWatcherEvent != DateTime.MinValue && LastWatcherEventFName != null)
+                if (LastWatcherEvent != DateTime.MinValue && LastWatcherEventFName != null)
                     if (DateTime.Now.Subtract(LastWatcherEvent).TotalMilliseconds < 500 && LastWatcherEventFName == e.FullPath)
                         return;
                 LastWatcherEvent = DateTime.Now;
@@ -195,7 +187,7 @@ namespace SpaceNET.CSharp
             //Compile the Script
             HTMLScript Script = new HTMLScript(FilePath);
             Script.Compile(false, false);
-            if(Script.CompileError.Length > 0)
+            if (Script.CompileError.Length > 0)
             {
                 MyLog.Core.Write("Failed compiling 'Static/Start.cshtml' :\n" + Script.CompileError, LogSeverity.Error);
                 return;
@@ -207,7 +199,7 @@ namespace SpaceNET.CSharp
             }
             catch (Exception ex)
             {
-                MyLog.Core.Write("Failed executing 'Static/Start.cshtml' :\n" + ex.ToString() , LogSeverity.Error);
+                MyLog.Core.Write("Failed executing 'Static/Start.cshtml' :\n" + ex.ToString(), LogSeverity.Error);
             }
         }
 
@@ -234,7 +226,7 @@ namespace SpaceNET.CSharp
                 return false;
             }
 
-            
+
 
             if (RealHash == MemoryFile.Hash && (RealHash != null && MemoryFile.Hash != null) && MemoryFile.CompileError.Length == 0)
                 return true;

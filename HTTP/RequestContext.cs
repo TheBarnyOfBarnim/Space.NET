@@ -6,11 +6,6 @@
  */
 
 using SpaceNET.API;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceNET.HTTP
 {
@@ -30,7 +25,7 @@ namespace SpaceNET.HTTP
             Session = session;
             GET = get;
             POST = post;
-            WebSocket= webSocket;
+            WebSocket = webSocket;
             Response = response;
         }
     }

@@ -5,17 +5,10 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using SpaceNET.Utilities;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Crypto.Engines;
+using SpaceNET.Utilities;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace SpaceNET.Core
 {
@@ -90,7 +83,7 @@ namespace SpaceNET.Core
 
             #endregion AskUser
 
-            var settings = new Settings() {DefaultPort = defaultPort, ServerRoot= ServerRootFolderPath, Prefixes = Prefixes, ACCESS_PASSWORD = accessPassword };
+            var settings = new Settings() { DefaultPort = defaultPort, ServerRoot = ServerRootFolderPath, Prefixes = Prefixes, ACCESS_PASSWORD = accessPassword };
             settings.Verify();
 
             ConsoleQuestions.WriteQuestionHead("All settings are set! Saving file to 'Config.json' in the current Folder.");

@@ -12,11 +12,7 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceNET.API.Utilities
 {
@@ -51,7 +47,7 @@ namespace SpaceNET.API.Utilities
         {
             get
             {
-               
+
                 return base[index];
             }
             set
@@ -79,7 +75,7 @@ namespace SpaceNET.API.Utilities
         public new bool Remove(T item)
         {
             bool succeed = base.Remove(item);
-            if(succeed)
+            if (succeed)
                 On_ItemRemoved(item);
             return succeed;
         }

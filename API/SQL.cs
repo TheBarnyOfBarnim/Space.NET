@@ -7,11 +7,7 @@
 
 using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceNET.API
 {
@@ -58,7 +54,7 @@ namespace SpaceNET.API
 
             public DataTable ExecCommand(string SQLCommand, string[] Parameters = null, object[] Values = null)
             {
-                if(Connection.State != ConnectionState.Open)
+                if (Connection.State != ConnectionState.Open)
                     Connection.Open();
 
                 try
@@ -69,7 +65,7 @@ namespace SpaceNET.API
                     using (MySqlCommand command = new MySqlCommand(SQLCommand, Connection))
                     {
 
-                        if(Parameters.Length == Values.Length)
+                        if (Parameters.Length == Values.Length)
                         {
                             for (int i = 0; i < Parameters.Length; i++)
                             {
@@ -78,10 +74,10 @@ namespace SpaceNET.API
                         }
                         else
                         {
-                            if(Parameters.Length > 0 || Values.Length > 0)
+                            if (Parameters.Length > 0 || Values.Length > 0)
                                 throw new ArgumentException("", "Parameters, Values");
                         }
-                        
+
                         DataTable Table = new DataTable();
                         Table.Load(command.ExecuteReader());
 

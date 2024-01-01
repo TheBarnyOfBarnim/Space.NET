@@ -5,27 +5,21 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
+using HttpMultipartParser;
 using SpaceNET.API;
 using SpaceNET.API.Utilities;
 using SpaceNET.Core;
 using SpaceNET.CSharp;
 using SpaceNET.Utilities;
-using HttpMultipartParser;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using static System.Net.WebRequestMethods;
 using File = System.IO.File;
-using Org.BouncyCastle.Utilities.Zlib;
-using System.Threading;
-using System.Linq;
 
 namespace SpaceNET.HTTP
 {
@@ -59,7 +53,7 @@ namespace SpaceNET.HTTP
 
             foreach (var prefix in settings.Prefixes)
             {
-                if(prefix != "")
+                if (prefix != "")
                     try
                     {
                         HttpListener.Prefixes.Add(prefix);
@@ -96,7 +90,9 @@ namespace SpaceNET.HTTP
             HttpListenerResponse HTTPResponse = ListenerContext.Response;
 
 
-            if (Program.Arguments.Contains("-no-cors"))
+
+
+            if (Program.Arguments.Contains(" - no-cors"))
                 HTTPResponse.AppendHeader("Access-Control-Allow-Origin", "*");
 
             #region Init_Request
@@ -120,7 +116,7 @@ namespace SpaceNET.HTTP
                     string response = "Access Denied [ACCESS_PASSWORD]<br><button onclick='document.cookie=`ACCESS_PASSWORD=` + prompt(`Password`) + `; expires=Fri, 31 Dec 9999 23:59:59 GMT`; location.reload();'>Set Password</button>";
                     Response.ContentType = "text/html; charset=utf-8";
                     Response.Write(response);
-                    MyLog.Core.Write    ($"Request (from: {Request.ClientIPAddress}) blocked by [ACCESS_PASSWORD]", LogSeverity.Warning);
+                    MyLog.Core.Write($"Request (from: {Request.ClientIPAddress}) blocked by [ACCESS_PASSWORD]", LogSeverity.Warning);
                     MyLog.Requests.Write($"Request (from: {Request.ClientIPAddress}) blocked by [ACCESS_PASSWORD]", LogSeverity.Warning);
 
                     goto RequestFinished;
@@ -143,7 +139,8 @@ namespace SpaceNET.HTTP
             if (HTTPRequest.IsWebSocketRequest)
             {
                 WebSocket = new WebSocket(ListenerContext);
-            }else
+            }
+            else
             {
                 #region Parse_FormData
 
@@ -165,6 +162,12 @@ namespace SpaceNET.HTTP
                         //StreamReader stream = new StreamReader(HTTPRequest.InputStream, HTTPRequest.ContentEncoding);
                         //string Data = stream.ReadToEnd();
                         string Data = HTTPRequest.Url.Query;
+                        if (Request.Method == "POST")
+                        {
+                            using (var reader = new StreamReader(HTTPRequest.InputStream))
+                                Data = reader.ReadToEnd();
+                        }
+
                         Data = Data.StartsWith('?') ? Data.Substring(1) : Data;
                         ParsedFormData = ParseHTMLData(Data);
                     }
@@ -200,7 +203,7 @@ namespace SpaceNET.HTTP
             if (Extension == ".cshtml")
             {
                 Handle_Script(Context);
-                if(Request.IsWebSocketRequest)
+                if (Request.IsWebSocketRequest)
                     goto DontCloseRequest;
             }
             else
@@ -217,7 +220,7 @@ namespace SpaceNET.HTTP
                     //if User was already moved to Folder, then respond with the index.html
                     if (Request.URL.EndsWith('/'))
                     {
-               
+
                         Request.Path += "index.cshtml";
                         Request.URL += "index.cshtml";
                         if (File.Exists(Request.RealPath))
@@ -303,10 +306,15 @@ namespace SpaceNET.HTTP
 
         private static Request GetRequest(HttpListenerContext Context)
         {
+            string UserIP = Context.Request.RemoteEndPoint.ToString();
+            if (Context.Request.Headers["X-Forwarded-For"].Length > 0)
+                UserIP = Context.Request.Headers["X-Forwarded-For"].Split(new char[] { ',' }).FirstOrDefault(UserIP);
+
+
             var request = new Request(Context.Request.HttpMethod,
                                Context.Request.Url.ToString(),
                                HttpUtility.UrlDecode(Context.Request.Url.AbsolutePath),
-                               Context.Request.RemoteEndPoint.ToString(),
+                               UserIP,
                                Context.Request.UserAgent,
                                Guid.NewGuid().ToString(),
                                Context.Request.IsWebSocketRequest);
@@ -345,7 +353,7 @@ namespace SpaceNET.HTTP
                 {
                     HTMLScript Script = CompiledScripts.Scripts[Context.Request.Path];
 
-                    //If File of Script not edited
+                    //If File of Script not edited or does not have errors
                     if (CompiledScripts.Compare(Context.Request.RealPath, Script) == true)
                     {
                         Script.Execute(Context);
@@ -363,7 +371,7 @@ namespace SpaceNET.HTTP
                     Script.Compile();
                     lock (CompiledScripts.DictionaryLOCK)
                     {
-                        if(CompiledScripts.Scripts.ContainsKey(Context.Request.Path) == false)
+                        if (CompiledScripts.Scripts.ContainsKey(Context.Request.Path) == false)
                             CompiledScripts.Scripts.Add(Context.Request.Path, Script);
                     }
 

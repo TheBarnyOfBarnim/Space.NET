@@ -16,7 +16,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace SpaceNET.Utilities
@@ -39,7 +38,7 @@ namespace SpaceNET.Utilities
         public delegate void OnWriteText(string Text);
         public event OnWriteText OnWrite;
 
-        public MyLog(string folderPath, string appName, string appversion) 
+        public MyLog(string folderPath, string appName, string appversion)
         {
             OnWrite += (t) => { };
             FolderPath = folderPath;

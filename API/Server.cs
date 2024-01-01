@@ -5,17 +5,9 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
 using SpaceNET.API.Utilities;
 using SpaceNET.Core;
+using System.IO;
 
 namespace SpaceNET.API
 {

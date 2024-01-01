@@ -5,33 +5,22 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CSharp.RuntimeBinder;
-using System.Dynamic;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.IO;
+using Microsoft.CodeAnalysis.CSharp;
+using SpaceNET.API;
+using SpaceNET.API.Utilities;
+using SpaceNET.Utilities;
 using System;
 using System.Collections.Generic;
-using SpaceNET.API;
-using System.Linq;
-using System.Globalization;
-using System.Web;
 using System.Data;
-using System.ComponentModel;
-using System.Xml.Serialization;
-using System.Text;
-using SpaceNET.API.Utilities;
-using static System.Net.WebRequestMethods;
-using System.Text.Json;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
-using SpaceNET.Utilities;
-using SpaceNET.Core;
-using SpaceNET.Scripting.Static;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
+using System.Web;
+using System.Xml.Serialization;
 
 namespace SpaceNET.CSharp
 {
@@ -46,7 +35,7 @@ namespace SpaceNET.CSharp
                                   "using System.Collections.Generic;" +
                                   "using System.IO;" +
                                   "using System.Data;" +
-                                  "using System.Globalization;" + 
+                                  "using System.Globalization;" +
                                   "using System.Linq;" +
                                   "using System.Text;" +
                                   "using System.Text.Json;" +
@@ -60,14 +49,15 @@ namespace SpaceNET.CSharp
                                   "using System.Xml.Linq;" +
                                   "using System.Reflection;" +
                                   "using System.Runtime.InteropServices;" +
-                                  "using SpaceNET.Utilities;";
+                                  "using SpaceNET.Utilities;" +
+                                  "using Newtonsoft.Json;";
 
             UsingMethodCode += "public static class " + Hash + " {";
 
             UsingMethodCode += $"public static void Execute({(UseArguments ? "Request Request, Session Session, GET GET, POST POST, Response Response, WebSocket WebSocket" : "")}) {{";
             string CodeBottom = "}}";
-      
-            
+
+
             IEnumerable<string> DefaultNamespaces =
             new[]
             {
@@ -87,10 +77,10 @@ namespace SpaceNET.CSharp
                 "System.Xml.Linq",
                 "System.Reflection",
                 "System.Runtime.InteropServices",
-                "SpaceNET.Utilities"
-
+                "SpaceNET.Utilities",
+                "Newtonsoft.Json",
             };
-            
+
             var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
             List<MetadataReference> references = new List<MetadataReference>
             {
@@ -100,7 +90,7 @@ namespace SpaceNET.CSharp
 #region .NET
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(IXmlSerializable).Assembly.Location),
-                
+
                 MetadataReference.CreateFromFile(typeof(MD5).Assembly.Location),
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "Microsoft.CSharp.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "Microsoft.VisualBasic.Core.dll")),
@@ -260,6 +250,7 @@ namespace SpaceNET.CSharp
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Xml.XPath.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Xml.XPath.XDocument.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "WindowsBase.dll")),
+                MetadataReference.CreateFromFile("Newtonsoft.Json.dll"),
 #endregion .NET
             };
 
@@ -361,7 +352,7 @@ namespace SpaceNET.CSharp
                         return (null, staticClass.CompileErrorRaw);
                     }
                 }
-                
+
 
                 try
                 {
@@ -386,7 +377,7 @@ namespace SpaceNET.CSharp
                 assemblyName: Path.GetFileName("ExternalCode"),
                 syntaxTrees: new[] { CSharpSyntaxTree.ParseText(NewCode) },
                 references: references,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: DefaultNamespaces, optimizationLevel: OptimizationLevel.Debug )
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: DefaultNamespaces, optimizationLevel: OptimizationLevel.Debug)
             );
 
 

@@ -8,11 +8,8 @@
 using SpaceNET.HTTP;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceNET.API
 {
@@ -51,7 +48,7 @@ namespace SpaceNET.API
         {
             HTTPServer.Sessions.Remove(this);
 
-            if(Cookies != null)
+            if (Cookies != null)
                 Cookies.Add(new Cookie("SessionID", null, "/"));
         }
 

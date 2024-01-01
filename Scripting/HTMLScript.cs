@@ -7,22 +7,12 @@
 
 using SpaceNET.API;
 using SpaceNET.API.Utilities;
-using SpaceNET.Core;
 using SpaceNET.HTTP;
 using SpaceNET.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace SpaceNET.CSharp
 {
@@ -61,6 +51,9 @@ namespace SpaceNET.CSharp
 
                 Hash = null;
                 string Head = (Method == null ? "A compile error occured!" : "A Runtime error occured!");
+
+                if (Method != null)
+                    MyLog.Core.Write(Head + " :\n" + ex);
 
                 Context.Response.Write(
                     "<div style='background-color: black; color: white; font-size: 150%;'><h1>" +
@@ -103,8 +96,8 @@ namespace SpaceNET.CSharp
 
             string Code = "";
             Code += ParsedFile;
-            if(UseArguments)
-                Code += @"void print(object __"+ Hash + "__) { if(__" + Hash + "__ != null){Response.ContentType = \"text/html; charset=utf-8\"; Response.Write(__" + Hash +"__.ToString());}}";
+            if (UseArguments)
+                Code += @"void print(object __" + Hash + "__) { if(__" + Hash + "__ != null){Response.ContentType = \"text/html; charset=utf-8\"; Response.Write(__" + Hash + "__.ToString());}}";
 
             var CompileResult = HTMLScriptCompiler.CompileScript(Code, Hash, UseParsing, UseArguments);
             Method = CompileResult.Item1;

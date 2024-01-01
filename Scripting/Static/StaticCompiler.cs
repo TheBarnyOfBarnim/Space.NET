@@ -5,36 +5,23 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CSharp.RuntimeBinder;
-using System.Dynamic;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.IO;
+using Microsoft.CodeAnalysis.CSharp;
+using SpaceNET.API;
+using SpaceNET.API.Utilities;
+using SpaceNET.CSharp;
+using SpaceNET.Utilities;
 using System;
 using System.Collections.Generic;
-using SpaceNET.API;
-using System.Linq;
-using System.Globalization;
-using System.Web;
 using System.Data;
-using System.ComponentModel;
-using System.Xml.Serialization;
-using System.Text;
-using SpaceNET.API.Utilities;
-using static System.Net.WebRequestMethods;
-using System.Text.Json;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
-using SpaceNET.Utilities;
-using System.Security.Policy;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Reflection.Emit;
-using System.Xml.Linq;
 using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
-using SpaceNET.CSharp;
+using System.Web;
+using System.Xml.Serialization;
 
 namespace SpaceNET.Scripting.Static
 {
@@ -62,7 +49,8 @@ namespace SpaceNET.Scripting.Static
                       "using System.Xml.Linq;" +
                       "using System.Reflection;" +
                       "using System.Runtime.InteropServices;" +
-                      "using SpaceNET.Utilities;";
+                      "using SpaceNET.Utilities;" +
+                      "using Newtonsoft.Json;";
 
             IEnumerable<string> DefaultNamespaces =
             new[]
@@ -84,11 +72,8 @@ namespace SpaceNET.Scripting.Static
                             "System.Reflection",
                             "System.Runtime.InteropServices",
                             "SpaceNET.Utilities",
-            
+                            "Newtonsoft.Json",
             };
-
-
-
 
             var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
             List<MetadataReference> references = new List<MetadataReference>()
@@ -260,6 +245,7 @@ namespace SpaceNET.Scripting.Static
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Xml.XPath.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Xml.XPath.XDocument.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "WindowsBase.dll")),
+                MetadataReference.CreateFromFile("Newtonsoft.Json.dll"),
 #endregion .NET
             };
 
@@ -348,6 +334,9 @@ namespace SpaceNET.Scripting.Static
 
             foreach (var (filename, staticClass) in CompiledScripts.Statics)
             {
+                if (staticClass.FileName == filename)
+                    continue;
+
                 if (staticClass.CompileErrorRaw != "")
                 {
                     return (null, null, staticClass.CompileError, staticClass.CompileErrorRaw);
@@ -378,10 +367,10 @@ namespace SpaceNET.Scripting.Static
                 references: references,
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: DefaultNamespaces, optimizationLevel: OptimizationLevel.Debug)
             );
-            
+
 
             string CompileError = "";
-            string CompileErrorRaw = ""; 
+            string CompileErrorRaw = "";
 
             using (var ms = new MemoryStream())
             {

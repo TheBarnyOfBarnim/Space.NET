@@ -7,11 +7,8 @@
 
 using SpaceNET.API.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceNET.API
 {
@@ -83,7 +80,7 @@ namespace SpaceNET.API
 
         public void Write(string str)
         {
-            if(str.Length != 0)
+            if (str.Length != 0)
                 Write(ContentEncoding.GetBytes(str));
         }
 

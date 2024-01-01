@@ -1,17 +1,10 @@
-﻿using Google.Protobuf.Collections;
-using MySqlX.XDevAPI.Common;
-using Org.BouncyCastle.Bcpg;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SpaceNET.API
 {
@@ -64,22 +57,26 @@ namespace SpaceNET.API
                     }
                     catch (Exception ex)
                     {
-                        try { OnClientClose();
-                            return; } catch (Exception) { return; }
+                        try
+                        {
+                            OnClientClose();
+                            return;
+                        }
+                        catch (Exception) { return; }
                     }
 
                     ms.Write(receiveBuffer.Array, receiveBuffer.Offset, result.Count);
                     length += result.Count;
                 }
                 while (!result.EndOfMessage);
-                
+
                 ms.SetLength(length);
 
                 if (result.MessageType == WebSocketMessageType.Text)
                 {
                     var text = Encoding.UTF8.GetString(ms.ToArray());
-                    try { OnReceiveText(text); } catch (Exception) {}
-                    
+                    try { OnReceiveText(text); } catch (Exception) { }
+
                 }
                 else if (result.MessageType == WebSocketMessageType.Binary)
                 {

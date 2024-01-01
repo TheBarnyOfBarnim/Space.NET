@@ -5,16 +5,6 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using SpaceNET.Core;
-using SpaceNET.HTTP;
-
 namespace SpaceNET.API
 {
     public class Request

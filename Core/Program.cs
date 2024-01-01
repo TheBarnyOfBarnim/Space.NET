@@ -5,13 +5,8 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using SpaceNET.API;
-using SpaceNET.CSharp;
 using SpaceNET.Utilities;
 using System;
-using System.IO;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace SpaceNET.Core
 {

@@ -5,14 +5,7 @@
  * https://github.com/TheBarnyOfBarnim/Space.NET/blob/master/LICENSE.md
  */
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceNET.API.Utilities
 {
@@ -25,7 +18,7 @@ namespace SpaceNET.API.Utilities
             get
             {
                 lock (this)
-                { 
+                {
                     if (Parameters.ContainsKey(Name))
                         return Parameters[Name];
                     else
